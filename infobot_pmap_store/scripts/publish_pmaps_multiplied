@@ -1,0 +1,103 @@
+#!/usr/bin/env python
+
+''' Simple script for merging multiple ProbabilityGrid by multiplying them.
+'''
+
+import sys
+import numpy as np
+
+import rospy
+import tf
+from infobot_mapping_msgs.msg import *
+from infobot_pmap_store.srv import *
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print >> sys.stderr, "publish_multiplied_pmaps <pmap_filename>..."
+        sys.exit(1)
+
+    rospy.init_node("publish_multiplied_pmaps", anonymous=True)
+
+    # Retrieve pmaps
+    pmaps = []
+    print "Waiting for /get_map ..."
+    rospy.wait_for_service("/get_pmap")
+    print "Waiting for /get_map Done!"
+
+    for filename in sys.argv[1:]:
+        try:
+            get_pmap = rospy.ServiceProxy("get_pmap", GetProbabilityMap)
+            resp = get_pmap(filename, "")
+            if resp.pmap.data != []:
+                pmaps.append(resp.pmap)
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e
+
+    # Merge pmaps
+
+    # extract info
+    res = 0.0
+    min_pixel_x = 0.0
+    min_pixel_y = 0.0
+    max_pixel_x = 0.0
+    max_pixel_y = 0.0
+    for i in range(len(pmaps)):
+        pmap = pmaps[i]
+        if i > 0 and res != pmap.info.resolution:
+            rospy.logerr("Does not support multiple resolutions.")
+            sys.exit(-1)
+        res = pmap.info.resolution
+        cur_min_pixel_x = int(np.round(pmap.info.origin.position.x / res))
+        cur_min_pixel_y = int(np.round(pmap.info.origin.position.y / res))
+        cur_max_pixel_x = cur_min_pixel_x + pmap.info.width
+        cur_max_pixel_y = cur_min_pixel_y + pmap.info.height
+        min_pixel_x = cur_min_pixel_x if cur_min_pixel_x < min_pixel_x else min_pixel_x
+        min_pixel_y = cur_min_pixel_y if cur_min_pixel_y < min_pixel_y else min_pixel_y
+        max_pixel_x = cur_max_pixel_x if cur_max_pixel_x > max_pixel_x else max_pixel_x
+        max_pixel_y = cur_max_pixel_y if cur_max_pixel_y > max_pixel_y else max_pixel_y
+        # print min_pixel_x, min_pixel_y, max_pixel_x, max_pixel_y
+
+    # merge pmaps to pmap_out
+    pmap_out = ProbabilityGrid()
+    pmap_out.info.width = max_pixel_x - min_pixel_x
+    pmap_out.info.height = max_pixel_y - min_pixel_y
+    pmap_out.info.resolution = res
+    pmap_out.info.origin.position.x = min_pixel_x * res
+    pmap_out.info.origin.position.y = min_pixel_y * res
+    pmap_out.info.origin.position.z = 0.0
+
+    q = tf.transformations.quaternion_from_euler(0.0, 0.0, 0.0)  # we do not allow any rotation
+    pmap_out.info.origin.orientation.x = q[0]
+    pmap_out.info.origin.orientation.y = q[1]
+    pmap_out.info.origin.orientation.z = q[2]
+    pmap_out.info.origin.orientation.w = q[3]
+    # print pmap_out.info
+
+    data = np.zeros((pmap_out.info.height, pmap_out.info.width))
+    # print data.shape
+
+    for i in range(len(pmaps)):
+        pmap = pmaps[i]
+        cur_min_pixel_x = int(np.round(pmap.info.origin.position.x / res)) - min_pixel_x
+        cur_min_pixel_y = int(np.round(pmap.info.origin.position.y / res)) - min_pixel_y
+        cur_max_pixel_x = cur_min_pixel_x + pmap.info.width
+        cur_max_pixel_y = cur_min_pixel_y + pmap.info.height
+
+        pmap_data = np.array(pmap.data).reshape((pmap.info.height, pmap.info.width))
+        if i is 0:
+            data[cur_min_pixel_y:cur_max_pixel_y, cur_min_pixel_x:cur_max_pixel_x] = pmap_data
+        else:
+            data[cur_min_pixel_y:cur_max_pixel_y, cur_min_pixel_x:cur_max_pixel_x] *= pmap_data
+
+    pmap_out.data = data.flatten()
+
+    # Publish merged pmap
+    pmap_out.info.map_load_time = rospy.Time.now()
+    pmap_out.info.map_load_time = rospy.Time.now()
+    pmap_out.header.frame_id = "map"
+    pmap_out.header.stamp = rospy.Time.now()
+    pub = rospy.Publisher("pmap_out", ProbabilityGrid, queue_size=1, latch=True)
+    pub.publish(pmap_out)
+
+    rospy.spin()

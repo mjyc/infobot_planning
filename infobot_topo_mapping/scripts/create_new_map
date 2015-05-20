@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+
+import rospy
+import sys
+import os.path
+from infobot_topo_msgs.srv import ProcessCurrentMetricMap
+from geometry_msgs.msg import Pose2D
+
+
+# -----------------------------------------------------------------------------
+def main():
+    rospy.init_node("topo_mapping_create_new_map")
+
+    # Args
+    if (len(sys.argv) <= 3):
+        print("Usage: %s <seed_view_x> <seed_view_y> <seed_view_theta> " % os.path.basename(sys.argv[0]))
+        sys.exit(1)
+    pose = Pose2D()
+    pose.x = float(sys.argv[1])
+    pose.y = float(sys.argv[2])
+    pose.theta = float(sys.argv[3])
+
+    # Call service
+    rospy.wait_for_service('/topo_mapping/process_current_metric_map')
+    try:
+        process_current_metric_map = rospy.ServiceProxy(
+            '/topo_mapping/process_current_metric_map', ProcessCurrentMetricMap)
+        process_current_metric_map(list(), pose)
+    except rospy.ServiceException, e:
+        print "Service call failed: %s" % e
+
+
+# -----------------------------------------------------------------------------
+if __name__ == '__main__':
+    main()

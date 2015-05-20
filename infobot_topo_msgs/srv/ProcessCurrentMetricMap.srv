@@ -1,0 +1,15 @@
+# Process the map currently on /metric_map topic
+
+# Transform from this map to other maps already incorporated into the topo map.
+# If given, incorporates this map into the existing topo map.
+# If not given, the seed_view must be provided.
+MetricMapTransform[] map_relations
+
+# Seed view to use. Used only if this is a new map that is not related to other
+# metric maps already incorporated into the topological map.
+geometry_msgs/Pose2D seed_view
+
+----
+
+# Resulting updated topological map
+TopologicalMap topo_map

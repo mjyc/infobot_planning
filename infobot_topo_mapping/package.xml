@@ -1,0 +1,29 @@
+<package>
+
+  <!-- Package Info -->
+  <name>infobot_topo_mapping</name>
+  <version>0.0.0</version>
+  <description>
+    InfoBot Framework: Generates discrete topological map based on multiple metric maps built by the robot.
+  </description>
+  <author email="a.pronobis@gmail.com">Andrzej Pronobis</author>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+  <license>TODO</license>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>infobot_topo_msgs</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>tf2</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>infobot_topo_msgs</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>map_server</run_depend>
+  <run_depend>tf2</run_depend>
+
+</package>

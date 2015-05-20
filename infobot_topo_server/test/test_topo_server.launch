@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="infobot_topo_server" type="topo_server" name="topo_server"
+          output="screen" args="$(find infobot_topo_server)/test/test_topo_map.yaml">
+        <remap from="~topo_map" to="/topo_map"/>
+    </node>
+
+    <node pkg="infobot_topo_server" type="topo_saver" name="topo_saver"
+          output="screen" args="-f $(find infobot_topo_server)/test/test_topo_map_out.yaml">
+        <remap from="~topo_map" to="/topo_map"/>
+    </node>
+
+</launch>

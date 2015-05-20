@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- ran below code with gibbs_max_iter_==100, gibbs_burnin_==20 in place_sampler.h -->
+
+    <arg name="gdb" default="false"/>
+    <arg name="vis_level" default="1"/>
+
+    <rosparam param="use_sim_time">false</rosparam>
+
+    <include file="$(find infobot_topo_mapping)/launch/extract_topology.launch">
+        <arg name="metric_map_file" value="$(find infobot_topo_mapping)/test_mike/real-floor4_corridor-nogo-closed_doors.yaml"/>
+        <arg name="topo_map_file" value="$(find infobot_topo_mapping)/test_mike/real-floor4_corridor-nogo-topo.yaml"/>
+        <arg name="param_file" value="$(find infobot_topo_mapping)/test_mike/params.yaml"/>
+        <arg name="vis_level" value="$(arg vis_level)"/>
+        <arg name="gdb" value="$(arg gdb)"/>
+    </include>
+
+</launch>

@@ -1,0 +1,6 @@
+free_thresh: 0.196
+image: real-floor4.pgm
+negate: 0
+occupied_thresh: 0.65
+origin: [-3.4000000000000004, -49.650000000000006, 0.0]
+resolution: 0.05

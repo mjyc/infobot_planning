@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>infobot_octomap_server</name>
+  <version>0.0.0</version>
+  <description>
+    InfoBot Framework: configuration files, launch files, and multiple octomap server implementations.
+  </description>
+  <author email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</author>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>octomap_server</build_depend>
+  <build_depend>octomap_msgs</build_depend>
+  <build_depend>octomap</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>yaml-cpp</build_depend>
+  <build_depend>map_server</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>octomap_server</run_depend>
+  <run_depend>octomap_msgs</run_depend>
+  <run_depend>octomap</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>yaml-cpp</run_depend>
+  <run_depend>map_server</run_depend>
+
+</package>

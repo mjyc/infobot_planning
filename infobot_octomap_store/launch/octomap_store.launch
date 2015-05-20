@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <arg name="octomap_files_dirpath"/>
+  <arg name="cloud_in"/>
+
+  <node pkg="infobot_octomap_store" type="octomap_store" name="octomap_store">
+    <param name="octomap_files_dirpath" value="$(arg octomap_files_dirpath)"/>
+    <remap from="cloud_in" to="$(arg cloud_in)" />
+  </node>
+
+</launch>

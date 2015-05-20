@@ -1,0 +1,259 @@
+#!/usr/bin/env python
+
+
+# ######################################################################
+# Imports
+# ######################################################################
+
+import rospy
+
+# System-builtins
+import glob
+import numpy as np
+import os
+import re
+import yaml
+
+# ROS
+import tf
+from nav_msgs.msg import OccupancyGrid
+
+# INFOBOT
+from infobot_map_store.srv import *
+
+
+# ######################################################################
+# Function
+# ######################################################################
+
+# Copied from:
+# http://stackoverflow.com/questions/7368739/numpy-and-16-bit-pgm
+def read_pgm(filename, byteorder=">"):
+    '''Return image data from a raw PGM file as numpy array.
+
+    Format specification: http://netpbm.sourceforge.net/doc/pgm.html
+
+    '''
+    with open(filename, "rb") as f:
+        buffer = f.read()
+    try:
+        header, width, height, maxval = re.search(
+            b"(^P5\s(?:\s*#.*[\r\n])*"
+            b"(\d+)\s(?:\s*#.*[\r\n])*"
+            b"(\d+)\s(?:\s*#.*[\r\n])*"
+            b"(\d+)\s(?:\s*#.*[\r\n]\s)*)", buffer).groups()
+    except AttributeError:
+        raise ValueError("Not a raw PGM file: \"%s\"" % filename)
+    return np.frombuffer(buffer,
+                         dtype="u1" if int(maxval) < 256 else byteorder + "u2",
+                         count=int(width) * int(height),
+                         offset=len(header)
+                         ).reshape((int(height), int(width)))
+
+
+def load_map_from_file(fname, res, negate, occ_th, free_th, origin):
+
+    map = OccupancyGrid()
+
+    img = read_pgm(fname)
+
+    map.info.width = img.shape[1]
+    map.info.height = img.shape[0]
+    map.info.resolution = res
+    map.info.origin.position.x = origin[0]
+    map.info.origin.position.y = origin[1]
+    map.info.origin.position.z = 0.0
+
+    q = tf.transformations.quaternion_from_euler(0.0, 0.0, origin[2])
+    map.info.origin.orientation.x = q[0]
+    map.info.origin.orientation.y = q[1]
+    map.info.origin.orientation.z = q[2]
+    map.info.origin.orientation.w = q[3]
+
+    # If negate is true, consider darker pixels has higher probability
+    if negate:
+        map.data = np.flipud(img).flatten() / 255.0
+    else:
+        map.data = (255.0 - np.flipud(img).flatten()) / 255.0
+
+    map.data[np.where(map.data > occ_th)] = 100
+    map.data[np.where(map.data < free_th)] = 0
+
+    mask = np.logical_and(map.data < occ_th, map.data > free_th)
+    # NOTE: trinary mode only
+    map.data[np.where(mask)] = -1
+
+    return map
+
+
+def parse_map_yaml_file(map_fname):
+    error_return_val = (None, None, None, None, None, None)
+
+    yaml_data = None
+    yaml_fname = map_fname
+    try:
+        with open(yaml_fname, "r") as f:
+            # load all documents
+            yaml_data = yaml.load(f)
+            if yaml_data is None:
+                raise yaml.YAMLError("Empty files not allowed")
+    except yaml.YAMLError as e:
+        rospy.logerr("Invalid YAML file: %s" % (str(e)))
+        return error_return_val
+    except:
+        rospy.logerr("YAML file error: %s" % sys.exc_info()[0])
+        return error_return_val
+
+    resolution = 0.0
+    origin = [0.0, 0.0, 0.0]
+    negate = False
+    occ_th = 0.0
+    free_th = 0.0
+    img_fname = ""
+    try:
+        resolution = yaml_data["resolution"]
+    except KeyError as e:
+        rospy.logerr("Invalid yaml file format: %s field not found" % str(e))
+        return error_return_val
+    try:
+        negate = yaml_data["negate"]
+    except KeyError as e:
+        rospy.logerr("Invalid yaml file format: %s field not found" % str(e))
+        return error_return_val
+    try:
+        occ_th = yaml_data["occupied_thresh"]
+    except KeyError as e:
+        rospy.logerr("Invalid yaml file format: %s field not found" % str(e))
+        return error_return_val
+    try:
+        free_th = yaml_data["free_thresh"]
+    except KeyError as e:
+        rospy.logerr("Invalid yaml file format: %s field not found" % str(e))
+        return error_return_val
+
+    try:
+        if not yaml_data["trinary"]:
+            rospy.logerr(
+                "This node does not make use of \"trinary\" field." % str(e))
+            rospy.logerr("Setting trinary to True")
+    except KeyError as e:
+        pass
+
+    try:
+        origin[0] = yaml_data["origin"][0]
+        origin[1] = yaml_data["origin"][1]
+        origin[2] = yaml_data["origin"][2]
+    except KeyError as e:
+        rospy.logerr("Invalid yaml file format: %s field not found" % str(e))
+        return error_return_val
+
+    try:
+        img_fname = os.path.join(
+            os.path.dirname(yaml_fname), yaml_data["image"])
+    except KeyError as e:
+        rospy.logerr("Invalid yaml file format: %s field not found" % str(e))
+        return error_return_val
+
+    return (resolution, origin, negate, occ_th, free_th, img_fname)
+
+
+def create_msg(map_files_dirpath, filename, frame_id):
+    (resolution, origin, negate, occ_th, free_th, img_fname) = parse_map_yaml_file(
+        os.path.abspath(os.path.join(map_files_dirpath, filename)))
+    if resolution is None:
+        rospy.logerr("Error while parsing filename %s" % filename)
+        return None
+
+    map = load_map_from_file(
+        img_fname, resolution, negate, occ_th, free_th, origin)
+    map.info.map_load_time = rospy.Time.now()
+    map.header.frame_id = frame_id
+    map.header.stamp = rospy.Time.now()
+
+    return map
+
+
+# ######################################################################
+# Main
+# ######################################################################
+
+class MapFilesServer():
+
+    DEFAULT_MAPFILES_DIRPATH = os.getcwd()
+    DEFAULT_FRAME_ID = "map"
+    DEFAULT_TOPIC = "/map"
+
+    def __init__(self):
+        rospy.init_node("map_files_server")
+
+        self.map_files_dirpath = rospy.get_param(
+            "~map_files_dirpath", self.DEFAULT_MAPFILES_DIRPATH)
+        rospy.loginfo("Setting map_files_dirpath to: %s" %
+                      self.map_files_dirpath)
+
+        rospy.Service(
+            "list_map_yaml_files", ListMapFiles, self.handle_list_yaml_files)
+        rospy.Service("publish_map", PublishMap, self.handle_publish_map)
+        rospy.Service("get_map", GetMap, self.handle_get_map)
+
+        rospy.spin()
+
+    def handle_list_yaml_files(self, req):
+        map_files = glob.glob(os.path.join(self.map_files_dirpath, "*.yaml"))
+        map_files = [os.path.basename(map_file) for map_file in map_files]
+        return ListMapFilesResponse(map_files)
+
+    def handle_publish_map(self, req):
+        error_return_val = PublishMapResponse(False)
+
+        filename = req.filename
+        if filename is "":
+            rospy.logwarn("filename field cannot be empty.")
+            return error_return_val
+        frame_id = req.frame_id
+        if frame_id is "":
+            rospy.logwarn(
+                "frame_id field cannot be empty. Setting it to \"map\".")
+            frame_id = rospy.get_param("~frame_id", self.DEFAULT_FRAME_ID)
+
+        map = create_msg(self.map_files_dirpath, filename, frame_id)
+        if map is None:
+            return error_return_val
+
+        topic = rospy.get_param("~topic", self.DEFAULT_TOPIC)
+        if topic is "":
+            topic = self.DEFAULT_TOPIC
+        pub = rospy.Publisher(
+            topic, OccupancyGrid, queue_size=1, latch=True)
+        pub.publish(map)
+
+        return PublishMapResponse(True)
+
+    def handle_get_map(self, req):
+        error_return_val = GetMapResponse(None)
+
+        filename = req.filename
+        if filename is "":
+            rospy.logerr("filename field cannot be empty.")
+            return error_return_val
+        frame_id = req.frame_id
+        if frame_id is "":
+            rospy.logwarn(
+                "frame_id field cannot be empty. Setting it to \"map\".")
+            frame_id = DEFAULT_FRAME_ID
+
+        map_files = glob.glob(os.path.join(self.map_files_dirpath, "*.yaml"))
+        map_files = [os.path.basename(map_file) for map_file in map_files]
+        if filename not in map_files:
+            rospy.logerr("filename %s cannot be found in dir %s" %
+                         (req.filename, self.map_files_dirpath))
+            return error_return_val
+
+        map = create_msg(self.map_files_dirpath, filename, frame_id)
+        if map is None:
+            return error_return_val
+
+        return GetMapResponse(map)
+
+if __name__ == "__main__":
+    MapFilesServer()
