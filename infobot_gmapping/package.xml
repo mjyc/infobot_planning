@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+
+  <!-- Package Info -->
+  <name>infobot_gmapping</name>
+  <version>0.0.0</version>
+  <description>
+    InfoBot Framework: Configuration and launch files for the GMapping SLAM algorithm.
+  </description>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+  <license>TODO</license>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>gmapping</run_depend>
+  <run_depend>map_server</run_depend>
+
+</package>
