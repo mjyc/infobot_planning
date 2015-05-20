@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import roslib
-roslib.load_manifest('infobot__move_base')
 import rospy
 import tf
 from smach import StateMachine, State
@@ -49,7 +47,7 @@ class NextGoal(State):
 
 # ------------------------------------------------------------
 def main():
-    rospy.init_node('infobot__move_base_send_multiple_goals')
+    rospy.init_node('infobot_move_base_send_multiple_goals')
 
     # Reads node ROS parameters.
     try:
