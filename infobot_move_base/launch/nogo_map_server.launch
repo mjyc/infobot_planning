@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <arg name="nogo_map_file"/>
+
+  <!-- Lanch no-go map server -->
+  <node name="no_go_map_server" pkg="map_server" type="map_server" args="$(arg nogo_map_file)">
+    <remap from="/map" to="/map_nogo"/>
+  </node>
+
+</launch>

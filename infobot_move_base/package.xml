@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<package>
+
+  <!-- Package Info -->
+  <name>infobot_move_base</name>
+  <version>0.0.0</version>
+  <description>
+    InfoBot Framework: Interface to the move_base navigation
+  </description>
+  <maintainer email="a.pronobis@gmail.com">Andrzej Pronobis</maintainer>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+  <author email="a.pronobis@gmail.com">Andrzej Pronobis</author>
+  <author email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</author>
+  <license>TODO</license>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>move_base</build_depend>
+  <build_depend>base_local_planner</build_depend>
+  <build_depend>clear_costmap_recovery</build_depend>
+  <build_depend>navfn</build_depend>
+  <build_depend>rotate_recovery</build_depend>
+  <build_depend>dwa_local_planner</build_depend>
+  <build_depend>costmap_2d</build_depend>
+  <build_depend>smach</build_depend>
+  <build_depend>smach_ros</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>move_base</run_depend>
+  <run_depend>base_local_planner</run_depend>
+  <run_depend>clear_costmap_recovery</run_depend>
+  <run_depend>navfn</run_depend>
+  <run_depend>rotate_recovery</run_depend>
+  <run_depend>dwa_local_planner</run_depend>
+  <run_depend>costmap_2d</run_depend>
+  <run_depend>smach</run_depend>
+  <run_depend>smach_ros</run_depend>
+
+</package>

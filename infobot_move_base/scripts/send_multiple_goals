@@ -1,0 +1,99 @@
+#!/usr/bin/python
+
+import roslib
+roslib.load_manifest('infobot__move_base')
+import rospy
+import tf
+from smach import StateMachine, State
+from smach_ros import SimpleActionState
+from move_base_msgs.msg import *
+
+
+# ------------------------------------------------------------
+def navigate_goal_cb(userdata, goal):
+    goal = MoveBaseGoal()
+    goal.target_pose.header.stamp = rospy.get_rostime()
+    goal.target_pose.header.frame_id = "map"
+    goal.target_pose.pose.position.x = float(userdata.poses[userdata.pose_nr][0])
+    goal.target_pose.pose.position.y = float(userdata.poses[userdata.pose_nr][1])
+    goal.target_pose.pose.position.z = 0.0
+    quaternion = tf.transformations.quaternion_from_euler(0, 0, userdata.poses[userdata.pose_nr][2])
+    goal.target_pose.pose.orientation.x = quaternion[0]
+    goal.target_pose.pose.orientation.y = quaternion[1]
+    goal.target_pose.pose.orientation.z = quaternion[2]
+    goal.target_pose.pose.orientation.w = quaternion[3]
+    return goal
+
+
+# ------------------------------------------------------------
+class NextGoal(State):
+
+    def __init__(self):
+        State.__init__(self,
+                       outcomes=['continue', 'finish'],
+                       input_keys=['loop', 'pose_nr_in', 'poses'],
+                       output_keys=['pose_nr_out'])
+
+    def execute(self, userdata):
+        tmp = userdata.pose_nr_in + 1
+        if tmp >= len(userdata.poses):
+            if userdata.loop:
+                tmp = 0
+            else:
+                rospy.loginfo('Finishing!')
+                return 'finish'
+        rospy.loginfo('Switching to next navigation goal: ' + str(tmp))
+        userdata.pose_nr_out = tmp
+        return 'continue'
+
+
+# ------------------------------------------------------------
+def main():
+    rospy.init_node('infobot__move_base_send_multiple_goals')
+
+    # Reads node ROS parameters.
+    try:
+        poses = rospy.get_param('~poses')
+    except KeyError as e:
+        rospy.logfatal(rospy.get_name() + ": Missing parameter: " + str(e))
+        sys.exit(-1)
+    loop = False
+    if rospy.has_param('~loop'):
+        loop = rospy.get_param('~loop')
+    rospy.loginfo("Will navigate to the following poses: " + str(poses) +
+                  ". Loop: " + str(loop))
+
+    # Define state machine
+    sm = StateMachine(['succeeded', 'aborted', 'preempted'])
+
+    # Initialize poses
+    sm.userdata.loop = loop
+    sm.userdata.poses = poses
+    sm.userdata.pose_nr = 0
+
+    # Define the state machine
+    with sm:
+        StateMachine.add('NAVIGATE',
+                         SimpleActionState('move_base',
+                                           MoveBaseAction,
+                                           goal_cb=navigate_goal_cb,
+                                           input_keys=['poses', 'pose_nr']),
+                         transitions={'succeeded': 'NEXT_GOAL',
+                                      'aborted': 'NAVIGATE',
+                                      'preempted': 'preempted'},
+                         remapping={'gripper_input': 'userdata_input'})
+        StateMachine.add('NEXT_GOAL', NextGoal(),
+                         transitions={'continue': 'NAVIGATE', 'finish': 'succeeded'},
+                         remapping={'loop': 'loop',
+                                    'pose_nr_in': 'pose_nr',
+                                    'pose_nr_out': 'pose_nr'})
+
+    # Execute SMACH plan
+    # outcome = sm.execute()
+    sm.execute()
+    rospy.signal_shutdown('All done.')
+
+
+# ------------------------------------------------------------
+if __name__ == '__main__':
+    main()

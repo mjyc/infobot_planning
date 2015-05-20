@@ -1,0 +1,109 @@
+#!/usr/bin/python
+
+import unittest
+import sys
+import rospy
+import rostest
+import tf
+import actionlib
+from actionlib_msgs.msg import *
+from move_base_msgs.msg import *
+
+
+class TestMultipleGoals(unittest.TestCase):
+
+    action_client = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Wait for server
+        cls.action_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+        rospy.loginfo("Waiting for the action client to become available...")
+        cls.action_client.wait_for_server()
+
+
+# ------------------------------------------------------------
+def test_template(pose, error_xy, error_th, timeout):
+    "Returns a template for a single test for single pose goal"
+
+    def function(self):
+        # Send goal
+        goal = MoveBaseGoal()
+        goal.target_pose.header.stamp = rospy.get_rostime()
+        goal.target_pose.header.frame_id = "map"
+        goal.target_pose.pose.position.x = pose[0]
+        goal.target_pose.pose.position.y = pose[1]
+        goal.target_pose.pose.position.z = 0.0
+        quaternion = tf.transformations.quaternion_from_euler(0, 0, pose[2])
+        goal.target_pose.pose.orientation.x = quaternion[0]
+        goal.target_pose.pose.orientation.y = quaternion[1]
+        goal.target_pose.pose.orientation.z = quaternion[2]
+        goal.target_pose.pose.orientation.w = quaternion[3]
+        self.action_client.send_goal(goal)
+
+        # Check result
+        got_result = self.action_client.wait_for_result(rospy.Duration(timeout))
+        self.assertTrue(got_result, "Navigation goal did not complete in the specified time (%d sec)." % timeout)
+        state = self.action_client.get_state()
+        self.assertEquals(state, GoalStatus.SUCCEEDED, "Goal did not succeed!")
+
+        # Check position
+        listener = tf.TransformListener()
+        # start_time = rospy.get_rostime()
+        rospy.get_rostime()
+        listener.waitForTransform('/map', '/base_footprint', rospy.Time(), rospy.Duration(5))
+        (trans, rot) = listener.lookupTransform('/map', '/base_footprint', rospy.Time())
+        # Get yaw
+        euler = tf.transformations.euler_from_quaternion(rot)
+        yaw = euler[2]
+        # Assert
+        self.assertLess(trans[0], pose[0] + error_xy)
+        self.assertGreater(trans[0], pose[0] - error_xy)
+        self.assertLess(trans[1], pose[1] + error_xy)
+        self.assertGreater(trans[1], pose[1] - error_xy)
+        self.assertLess(yaw, pose[2] + error_th)
+        self.assertGreater(yaw, pose[2] - error_th)
+
+    # Return the test function
+    return function
+
+
+# ------------------------------------------------------------
+def main():
+    rospy.init_node('test_multiple_goals')
+
+    # Get parameters
+    try:
+        poses = rospy.get_param('~poses')
+    except KeyError as e:
+        rospy.logfatal(rospy.get_name() + ": Missing parameter: " + str(e))
+        sys.exit(-1)
+    try:
+        timeout = rospy.get_param('~timeout')
+    except KeyError as e:
+        rospy.logfatal(rospy.get_name() + ": Missing parameter: " + str(e))
+        sys.exit(-1)
+    try:
+        error_xy = rospy.get_param('~error_xy')
+    except KeyError as e:
+        rospy.logfatal(rospy.get_name() + ": Missing parameter: " + str(e))
+        sys.exit(-1)
+    try:
+        error_th = rospy.get_param('~error_th')
+    except KeyError as e:
+        rospy.logfatal(rospy.get_name() + ": Missing parameter: " + str(e))
+        sys.exit(-1)
+
+    # Define tests using reflection
+    for p in poses:
+        test_name = "test_%.2f_%.2f_%.2f" % (p[0], p[1], p[2])
+        test_name = test_name.replace(".", "-")
+        setattr(TestMultipleGoals, test_name, test_template(p, error_xy, error_th, timeout))
+
+    # Run the tests
+    rostest.run("infobot_move_base", 'test_multiple_goals', TestMultipleGoals)
+
+
+# ------------------------------------------------------------
+if __name__ == '__main__':
+    main()
