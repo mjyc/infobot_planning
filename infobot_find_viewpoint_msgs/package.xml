@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+  <name>infobot_find_viewpoint_msgs</name>
+  <version>0.0.0</version>
+  <description>
+    InfoBot Framework: This package defines messages used in the find_viewpoint package.
+  </description>
+  <author email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</author>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>octomap_msgs</build_depend>
+  <build_depend>infobot_map_msgs</build_depend>
+
+  <run_depend>message_runtime</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>octomap_msgs</run_depend>
+  <run_depend>infobot_map_msgs</run_depend>
+
+</package>

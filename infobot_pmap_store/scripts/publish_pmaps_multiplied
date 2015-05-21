@@ -8,8 +8,8 @@ import numpy as np
 
 import rospy
 import tf
-from infobot_mapping_msgs.msg import *
-from infobot_pmap_store.srv import *
+from infobot_map_msgs.msg import *
+from infobot_map_msgs.srv import *
 
 
 if __name__ == "__main__":

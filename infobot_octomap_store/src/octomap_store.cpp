@@ -9,9 +9,9 @@
 #include <octomap_msgs/GetOctomap.h>
 #include <octomap/octomap.h>
 
-#include <infobot_octomap_store/ListOctomapFiles.h>
-#include <infobot_octomap_store/PublishOctomap.h>
-#include <infobot_octomap_store/GetOctomap.h>
+#include <infobot_map_msgs/ListOctomapFiles.h>
+#include <infobot_map_msgs/PublishOctomap.h>
+#include <infobot_map_msgs/GetOctomap.h>
 
 
 class OctomapFilesServerNode
@@ -36,12 +36,12 @@ private:
   std::string octomapFilesDirStr_;
 
 private:
-  bool listOctomapFilesCallback(infobot_octomap_store::ListOctomapFiles::Request  &req,
-                                infobot_octomap_store::ListOctomapFiles::Response &res);
-  bool publishOctomapCallback(infobot_octomap_store::PublishOctomap::Request  &req,
-                              infobot_octomap_store::PublishOctomap::Response &res);
-  bool getOctomapCallback(infobot_octomap_store::GetOctomap::Request  &req,
-                          infobot_octomap_store::GetOctomap::Response &res);
+  bool listOctomapFilesCallback(infobot_map_msgs::ListOctomapFiles::Request  &req,
+                                infobot_map_msgs::ListOctomapFiles::Response &res);
+  bool publishOctomapCallback(infobot_map_msgs::PublishOctomap::Request  &req,
+                              infobot_map_msgs::PublishOctomap::Response &res);
+  bool getOctomapCallback(infobot_map_msgs::GetOctomap::Request  &req,
+                          infobot_map_msgs::GetOctomap::Response &res);
 };
 
 const std::string OctomapFilesServerNode::DEFAULT_FRAME_ID = "map";
@@ -67,8 +67,8 @@ OctomapFilesServerNode::OctomapFilesServerNode(int argc, char **argv):
                          "get_octomap", &OctomapFilesServerNode::getOctomapCallback, this);
 }
 
-bool OctomapFilesServerNode::listOctomapFilesCallback(infobot_octomap_store::ListOctomapFiles::Request &req,
-    infobot_octomap_store::ListOctomapFiles::Response &res)
+bool OctomapFilesServerNode::listOctomapFilesCallback(infobot_map_msgs::ListOctomapFiles::Request &req,
+    infobot_map_msgs::ListOctomapFiles::Response &res)
 {
   namespace fs = ::boost::filesystem;
 
@@ -90,8 +90,8 @@ bool OctomapFilesServerNode::listOctomapFilesCallback(infobot_octomap_store::Lis
   return true;
 }
 
-bool OctomapFilesServerNode::publishOctomapCallback(infobot_octomap_store::PublishOctomap::Request &req,
-    infobot_octomap_store::PublishOctomap::Response &res)
+bool OctomapFilesServerNode::publishOctomapCallback(infobot_map_msgs::PublishOctomap::Request &req,
+    infobot_map_msgs::PublishOctomap::Response &res)
 {
   namespace fs = ::boost::filesystem;
 
@@ -115,8 +115,8 @@ bool OctomapFilesServerNode::publishOctomapCallback(infobot_octomap_store::Publi
   return true;
 }
 
-bool OctomapFilesServerNode::getOctomapCallback(infobot_octomap_store::GetOctomap::Request &req,
-    infobot_octomap_store::GetOctomap::Response &res)
+bool OctomapFilesServerNode::getOctomapCallback(infobot_map_msgs::GetOctomap::Request &req,
+    infobot_map_msgs::GetOctomap::Response &res)
 {
   namespace fs = ::boost::filesystem;
   using octomap::OcTree;

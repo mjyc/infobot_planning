@@ -19,7 +19,7 @@ import tf
 from nav_msgs.msg import OccupancyGrid
 
 # INFOBOT
-from infobot_map_store.srv import *
+from infobot_map_msgs.srv import *
 
 
 # ######################################################################
