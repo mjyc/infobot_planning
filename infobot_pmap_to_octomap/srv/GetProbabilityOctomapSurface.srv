@@ -1,8 +1,0 @@
-# Uses "get_pmap" service provided by "pmap_files_server" node.
-string pmap_filename
-string pmap_frame_id
-# Uses "get_octomap" service provided by  some "octomap_store" node.
-string octomap_filename
-string octomap_frame_id
----
-octomap_msgs/Octomap octomap

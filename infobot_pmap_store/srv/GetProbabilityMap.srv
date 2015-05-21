@@ -1,4 +1,0 @@
-string filename
-string frame_id
----
-infobot_mapping_msgs/ProbabilityGrid pmap

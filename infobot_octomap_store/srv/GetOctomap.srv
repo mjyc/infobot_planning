@@ -1,4 +1,0 @@
-string filename
-string frame_id  # also sets ~frame_id parameter
----
-octomap_msgs/Octomap octomap
