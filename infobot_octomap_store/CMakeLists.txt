@@ -5,6 +5,7 @@ find_package(catkin REQUIRED
   roscpp
   octomap_server
   octomap
+  infobot_map_msgs
 )
 
 find_package(Boost REQUIRED COMPONENTS filesystem)
@@ -12,7 +13,7 @@ find_package(Boost REQUIRED COMPONENTS filesystem)
 catkin_package(
   # INCLUDE_DIRS
   # LIBRARIES
-  CATKIN_DEPENDS roscpp octomap_server
+  CATKIN_DEPENDS roscpp octomap_server infobot_map_msgs
   # DEPENDS
 )
 
