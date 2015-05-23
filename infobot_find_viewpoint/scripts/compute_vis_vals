@@ -5,9 +5,6 @@ from infobot_find_viewpoint_msgs.srv import *
 from infobot_map_msgs.srv import *
 from infobot_topo_msgs.srv import *
 
-import actionlib
-from move_base_msgs.msg import *
-
 
 def compute_vis_values_client(mode, pmap_filename, pmap_frame_id, octomap_filename, octomap_frame_id,
                               topomap_filename, topomap_frame_id):
@@ -21,16 +18,9 @@ def compute_vis_values_client(mode, pmap_filename, pmap_frame_id, octomap_filena
         print "Service call failed: %s" % e
 
 if __name__ == "__main__":
-
-    if len(sys.argv) < 2:
-        print >> sys.stderr, "test_action.py <pmap_filename>"
-        sys.exit(1)
-
-    rospy.init_node("visibility_action")
-
     rospy.wait_for_service("publish_pmap")
     publish_pmap = rospy.ServiceProxy("publish_pmap", PublishProbabilityMap)
-    publish_pmap_resp = publish_pmap(sys.argv[1], "")
+    publish_pmap_resp = publish_pmap("CSE491.yaml", "")
     if not publish_pmap_resp or not publish_pmap_resp.success:
         sys.exit(1)
 
@@ -53,46 +43,19 @@ if __name__ == "__main__":
     if not get_pmap_resp:
         sys.exit(1)
 
-    margin = 5.0  # in meters
+    margin = 10.0  # in meters
     minX = get_pmap_resp.pmap.info.origin.position.x - margin
     maxX = get_pmap_resp.pmap.info.origin.position.x + \
         (get_pmap_resp.pmap.info.width * get_pmap_resp.pmap.info.resolution) + margin
-    minY = get_pmap_resp.pmap.info.origin.position.y - margin
+    minY = get_pmap_resp.pmap.info.origin.position.y
     maxY = get_pmap_resp.pmap.info.origin.position.y + \
         (get_pmap_resp.pmap.info.height * get_pmap_resp.pmap.info.resolution) + margin
 
-    print "applying filter to region:", minX, maxX, minY, maxY
+    print minX, maxX, minY, maxY
 
     rospy.wait_for_service("apply_rect_filter")
     apply_rect_filter = rospy.ServiceProxy("apply_rect_filter", ApplyRectangleFilter)
     if not apply_rect_filter(minX, minY, maxX, maxY):
         sys.exit(1)
 
-    resp = compute_vis_values_client(1, "", "", "", "", "", "")
-    print "cur max i=", resp.max_vis_value_index
-    prev_val = resp.max_vis_value_index
-
-
-    action_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-    action_client.wait_for_server()
-    for i in range(10):
-        print "sending move base goal"
-        cur_pose = resp.poses[resp.max_vis_value_index]
-        goal = MoveBaseGoal()
-        goal.target_pose.header.stamp = rospy.get_rostime()
-        goal.target_pose.header.frame_id = "map"
-        goal.target_pose.pose.position.x = cur_pose.position.x
-        goal.target_pose.pose.position.y = cur_pose.position.y
-        goal.target_pose.pose.position.z = 0.0
-        goal.target_pose.pose.orientation = cur_pose.orientation
-        action_client.send_goal(goal)
-        action_client.wait_for_result()
-
-        print "recomputing vis_values"
-        resp = compute_vis_values_client(0, "", "", "", "", "", "")
-        print "cur max i=", resp.max_vis_value_index
-        if (prev_val == resp.max_vis_value_index):
-            print "Done!"
-            break
-        else:
-            prev_val = resp.max_vis_value_index
+    print compute_vis_values_client(0, "", "", "", "", "", "")
