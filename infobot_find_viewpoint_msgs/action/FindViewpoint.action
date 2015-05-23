@@ -10,6 +10,7 @@ string octomap_frame_id
 string topomap_filename
 string topomap_frame_id
 ---
+string img_filename
+---
 geometry_msgs/Pose[] poses
 float64[] vis_values
-uint64 max_vis_value_index

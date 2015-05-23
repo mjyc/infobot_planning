@@ -27,7 +27,6 @@ public:
   static const int DEFAULT_FOV_GRID_RESOLUTION;
   static const double DEFAULT_HEIGHT_MEAN;
   static const double DEFAULT_HEIGHT_VAR;
-  static const double DEFAULT_PROSILICA_HEIGHT;
 
 public:
   VisibilityReasonerNode(int argc, char **argv);
@@ -51,22 +50,20 @@ private:
   int fov_grid_res_;
   double height_mean_;
   double height_var_;
-  double prosilica_height_;
 
 private:
   bool computeVisValueSrvCb(infobot_find_viewpoint_msgs::ComputeVisibilityValue::Request  &req,
                             infobot_find_viewpoint_msgs::ComputeVisibilityValue::Response &res);
   bool computeVisValuesSrvCb(infobot_find_viewpoint_msgs::ComputeVisibilityValues::Request  &req,
-                            infobot_find_viewpoint_msgs::ComputeVisibilityValues::Response &res);
+                             infobot_find_viewpoint_msgs::ComputeVisibilityValues::Response &res);
 };
 
-const double VisibilityReasonerNode::DEFAULT_HORIZONTAL_ANGLE_OF_VIEW = 58.00 * M_PI / 180;  // in radians
-const double VisibilityReasonerNode::DEFAULT_VERTICAL_ANGLE_OF_VIEW = 45.00 * M_PI / 180;  // in radians
+const double VisibilityReasonerNode::DEFAULT_HORIZONTAL_ANGLE_OF_VIEW = 96.80 * M_PI / 180;  // in radians
+const double VisibilityReasonerNode::DEFAULT_VERTICAL_ANGLE_OF_VIEW = 79.40 * M_PI / 180;  // in radians
 const double VisibilityReasonerNode::DEFAULT_DEPTH_MAX = 10;  // in m
 const int VisibilityReasonerNode::DEFAULT_FOV_GRID_RESOLUTION = 50;
 const double VisibilityReasonerNode::DEFAULT_HEIGHT_MEAN = 1.65;
 const double VisibilityReasonerNode::DEFAULT_HEIGHT_VAR = 0.1;
-const double VisibilityReasonerNode::DEFAULT_PROSILICA_HEIGHT = 1.35;
 
 //----------------------------------------------------------------------
 VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
@@ -74,9 +71,9 @@ VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
   privateNh_("~")
 {
   computeVisValueSrv_ = nh_.advertiseService("compute_vis_value",
-    &VisibilityReasonerNode::computeVisValueSrvCb, this);
+                        &VisibilityReasonerNode::computeVisValueSrvCb, this);
   computeVisValuesSrv_ = nh_.advertiseService("compute_vis_values",
-    &VisibilityReasonerNode::computeVisValuesSrvCb, this);
+                         &VisibilityReasonerNode::computeVisValuesSrvCb, this);
 
   visibleOctomapPub_ = nh_.advertise<octomap_msgs::Octomap>("visible_octomap", 1, true);
   cameraFOVMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_reasoner_fov_markers", 10, true);
@@ -88,7 +85,6 @@ VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
   privateNh_.param("fov_grid_res", fov_grid_res_, DEFAULT_FOV_GRID_RESOLUTION);
   privateNh_.param("height_mean", height_mean_, DEFAULT_HEIGHT_MEAN);
   privateNh_.param("height_var", height_var_, DEFAULT_HEIGHT_VAR);
-  privateNh_.param("prosilica_height", prosilica_height_, DEFAULT_PROSILICA_HEIGHT);
 }
 
 //----------------------------------------------------------------------
@@ -183,7 +179,7 @@ bool VisibilityReasonerNode::computeVisValueSrvCb(
   double visValue = 0.0;
   octomap::KeySet visibleCells;
   if (!computeVisibilityValue(req.camera_pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_, frame_id,
-      fov_grid_res_, visibleCells, visValue, octree))
+                              fov_grid_res_, visibleCells, visValue, octree))
   {
     delete octree;
     return false;
@@ -208,7 +204,7 @@ bool VisibilityReasonerNode::computeVisValueSrvCb(
   if (!octomap_msgs::fullMapToMsg(*octree, visibleOctomap))
     ROS_ERROR("Error serializing OctoMap. Failed to publish visible cells.");
   else
-     visibleOctomapPub_.publish(visibleOctomap);
+    visibleOctomapPub_.publish(visibleOctomap);
 
   delete octree;
   res.vis_value = visValue;
@@ -219,7 +215,7 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
   infobot_find_viewpoint_msgs::ComputeVisibilityValues::Request  &req,
   infobot_find_viewpoint_msgs::ComputeVisibilityValues::Response &res)
 {
-  // Get ProbabilityOctomap
+  // Get ProbabilityOctomap.
   ros::ServiceClient getProbOctomapClient;
   octomap_msgs::Octomap poctomap;
   if (req.pmap_to_octomap_mode == req.SURFACE)
@@ -263,23 +259,10 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
     ROS_ERROR("Unknown mode=%d", req.pmap_to_octomap_mode);
     return false;
   }
+  // set frame_id
   std::string frame_id = poctomap.header.frame_id;
 
-  // TODO(mjyc): check frame_id of topomap.
-  infobot_topo_msgs::TopologicalMap topomap;
-  ROS_INFO("Waiting for /get_topomap service");
-  ros::service::waitForService("/get_topomap");
-  ROS_INFO("Waiting for /get_topomap service done!");
-  ros::ServiceClient getTopoMapClient = nh_.serviceClient<infobot_topo_msgs::GetTopologicalMap>("/get_topomap");
-  infobot_topo_msgs::GetTopologicalMap getTopoMapSrv;
-  getTopoMapSrv.request.filename = req.topomap_filename;
-  getTopoMapSrv.request.frame_id = req.topomap_frame_id;
-  if (getTopoMapClient.call(getTopoMapSrv))
-    topomap = getTopoMapSrv.response.topomap;
-  else
-    return false;
-
-  // Compute Visibility Value
+  // Compute Visibility Value.
   octomap::OcTree* octree = NULL;
   octomap::AbstractOcTree* tree = octomap_msgs::msgToMap(poctomap);
   if (tree)
@@ -290,49 +273,38 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
   {
     return false;
   }
-
+  // for debugging
   // double minX, minY, minZ, maxX, maxY, maxZ;
   // octree->getMetricMin(minX, minY, minZ);
   // octree->getMetricMax(maxX, maxY, maxZ);
   // std::cout << minX << " " << minY << " " << minZ << " " << maxX << " " << maxY << " " << maxZ << " " << std::endl;
 
-  for (int i = 0; i < topomap.places.size(); ++i)
+  for (int i = 0; i < req.camera_poses.size(); ++i)
   {
-    for (int j = 0; j < topomap.places[i].views.size(); ++j)
+    geometry_msgs::Pose pose = req.camera_poses[i];
+    pose.position.x = pose.position.x;
+    pose.position.y = pose.position.y;
+    pose.position.z = pose.position.z;
+    pose.orientation = pose.orientation;
+
+    double visValue = 0.0;
+    octomap::KeySet visibleCells;
+    if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_, frame_id,
+                                fov_grid_res_, visibleCells, visValue, octree))
     {
-      geometry_msgs::Pose pose;
-      pose.position.x = topomap.places[i].views[j].pose.x;
-      pose.position.y = topomap.places[i].views[j].pose.y;
-      pose.position.z = prosilica_height_;
-      pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, 0, topomap.places[i].views[j].pose.theta);
-
-      double visValue = 0.0;
-      octomap::KeySet visibleCells;
-      if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_, frame_id,
-          fov_grid_res_, visibleCells, visValue, octree))
-      {
-        ROS_ERROR("Failed to compute a visibility value.");
-        delete octree;
-        return false;
-      }
-
-      ROS_INFO("topomap_id=%s, place_id=%d, view_id=%d, vis_value=%f",
-               topomap.topo_map_id.c_str(), topomap.places[i].place_id, topomap.places[i].views[j].view_id,
-               visValue);
-
-      res.poses.push_back(pose);
-      res.vis_values.push_back(visValue);
+      ROS_ERROR("Failed to compute a visibility value.");
+      delete octree;
+      return false;
     }
+
+    ROS_INFO("vis_value=%f", visValue);
+
+    res.vis_values.push_back(visValue);
   }
   delete octree;
-  double maxVisValue = *std::max_element(res.vis_values.begin(), res.vis_values.end());
-  int maxVisibilityValueIdx = std::distance(res.vis_values.begin(),
-    std::max_element(res.vis_values.begin(), res.vis_values.end()));
-  res.max_vis_value_index = maxVisibilityValueIdx;
 
   // Publish markers
-  visualization_msgs::MarkerArray marray = createVisValsMarkers(
-    frame_id, res.poses, res.vis_values, res.max_vis_value_index);
+  visualization_msgs::MarkerArray marray = createVisValsMarkers(frame_id, req.camera_poses, res.vis_values);
   visValsMarkersPub_.publish(marray);
 
   return true;

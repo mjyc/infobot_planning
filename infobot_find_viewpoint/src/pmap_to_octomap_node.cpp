@@ -20,9 +20,9 @@
 class ProbabilityMapToOctomapNode
 {
 public:
+  static const std::string DEFAULT_FRAME_ID;
   static const double DEFAULT_GROUND_HEIGHT;
   static const double MAX_SURFACE_HEIGHT;
-  static const std::string DEFAULT_FRAME_ID;
 
 public:
   ProbabilityMapToOctomapNode(int argc, char **argv);
@@ -64,7 +64,7 @@ private:
                                           octomap::OcTree* octree);
 };
 
-const double ProbabilityMapToOctomapNode::DEFAULT_GROUND_HEIGHT = 0.0;  // C++11 style
+const double ProbabilityMapToOctomapNode::DEFAULT_GROUND_HEIGHT = 0.0;
 const double ProbabilityMapToOctomapNode::MAX_SURFACE_HEIGHT = 1.5;
 const std::string ProbabilityMapToOctomapNode::DEFAULT_FRAME_ID = "map";
 
@@ -196,6 +196,8 @@ bool ProbabilityMapToOctomapNode::surfaceCallback(
     octree = dynamic_cast<octomap::OcTree*>(tree);
   }
 
+  // NOTE: make sure to use same code in
+  //       infobot_rviz_map/src/poctomap_display.cpp
   int probValOffset = static_cast<int>(octree->getClampingThresMaxLog() + 0.5);
   ROS_DEBUG("probability_value_offset=%d", probValOffset);
   if (!applyProbabilityMapToOctomapSurface(pmap, probValOffset, octree))
@@ -248,6 +250,8 @@ bool ProbabilityMapToOctomapNode::heightCallback(
     octree = dynamic_cast<octomap::OcTree*>(tree);
   }
 
+  // NOTE: make sure to use same code in
+  //       infobot_rviz_map/src/poctomap_display.cpp
   int probValOffset = static_cast<int>(octree->getClampingThresMaxLog() + 0.5);
   ROS_DEBUG("probability_value_offset=%d", probValOffset);
   if (!applyProbabilityMapToOctomapHeight(pmap, probValOffset, req.height_mean, req.height_var, octree))

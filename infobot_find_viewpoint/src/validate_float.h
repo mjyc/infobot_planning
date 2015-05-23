@@ -54,4 +54,4 @@ inline bool validateFloats(const infobot_map_msgs::ProbabilityGrid& msg)
   return valid;
 }
 
-#endif // INFOBOT_PMAP_TO_OCTOMAP_VALIDATE_FLOAT_H
+#endif  // INFOBOT_PMAP_TO_OCTOMAP_VALIDATE_FLOAT_H

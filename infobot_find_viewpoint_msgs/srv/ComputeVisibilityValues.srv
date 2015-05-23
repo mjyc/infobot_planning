@@ -1,15 +1,11 @@
 uint8 SURFACE = 0
 uint8 HEIGHT = 1
 
+geometry_msgs/Pose[] camera_poses
 uint8 pmap_to_octomap_mode
-
 string pmap_filename
 string pmap_frame_id
 string octomap_filename
 string octomap_frame_id
-string topomap_filename
-string topomap_frame_id
 ---
-geometry_msgs/Pose[] poses
 float64[] vis_values
-uint64 max_vis_value_index

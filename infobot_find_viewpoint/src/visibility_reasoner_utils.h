@@ -172,10 +172,19 @@ inline visualization_msgs::MarkerArray createFOVGridMarkers(
 inline visualization_msgs::MarkerArray createVisValsMarkers(
   const std::string &frameId,
   const std::vector<geometry_msgs::Pose> &poses,
-  const std::vector<double> &vis_values,
-  const int maxVisValueIndex)
+  const std::vector<double> &vis_values)
 {
   visualization_msgs::MarkerArray marray;
+
+  // check args
+  if (poses.size() != vis_values.size())
+  {
+    ROS_ERROR_STREAM(
+      "Input poses and vis_values have different sizes. poses.size()=" << poses.size() << ", vis_values.size()=" <<
+      vis_values.size());
+    return marray;
+  }
+  int maxVisValueIndex = std::distance(vis_values.begin(), std::max_element(vis_values.begin(), vis_values.end()));
 
   int type = visualization_msgs::Marker::ARROW;
 
