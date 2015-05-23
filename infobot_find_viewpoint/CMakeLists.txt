@@ -33,7 +33,10 @@ target_link_libraries(pmap_to_octomap
 
 add_executable(visibility_reasoner src/visibility_reasoner_node.cpp)
 add_dependencies(visibility_reasoner ${catkin_EXPORTED_TARGETS})
-target_link_libraries(visibility_reasoner ${OCTOMAP_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(visibility_reasoner
+  ${catkin_LIBRARIES}
+  ${OCTOMAP_LIBRARIES}
+)
 
 ## Install executables and/or libraries
 install(TARGETS
