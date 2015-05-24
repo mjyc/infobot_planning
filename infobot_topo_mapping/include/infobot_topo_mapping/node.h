@@ -10,7 +10,7 @@
 
 #include "infobot_topo_mapping/topo_extractor.h"
 #include "infobot_topo_mapping/visualizer.h"
-#include "infobot_topo_mapping/SaraTopoMappingConfig.h"
+#include "infobot_topo_mapping/InfoBotTopoMappingConfig.h"
 
 // #include <string>
 
@@ -43,7 +43,7 @@ class Node
   ros::ServiceServer process_current_metric_map_srv_;
 
   // Dynamic reconfigure
-  dynamic_reconfigure::Server<SaraTopoMappingConfig> config_server_;
+  dynamic_reconfigure::Server<InfoBotTopoMappingConfig> config_server_;
 
   // Maps
   nav_msgs::OccupancyGrid::ConstPtr metric_map_;
@@ -70,7 +70,7 @@ class Node
   void metricMapCb(const nav_msgs::OccupancyGrid::ConstPtr &msg);
 
   /** Dynamic reconfigure callback */
-  void reconfigureCallback(const SaraTopoMappingConfig &new_config,
+  void reconfigureCallback(const InfoBotTopoMappingConfig &new_config,
                            uint32_t level);
 
 

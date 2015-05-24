@@ -18,7 +18,7 @@ find_package(OpenCV REQUIRED core imgproc highgui contrib)
 
 
 # generate the dynamic_reconfigure config file
-generate_dynamic_reconfigure_options(cfg/SaraTopoMapping.cfg)
+generate_dynamic_reconfigure_options(cfg/InfoBotTopoMapping.cfg)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures

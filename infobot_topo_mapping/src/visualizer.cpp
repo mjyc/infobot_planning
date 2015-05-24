@@ -35,6 +35,7 @@ bool Visualizer::waitForKey() const
 
   if (visualization_level_ > 0)
   {
+    ROS_INFO("Press any key to continue.");
     key = cv::waitKey();
   }
 

@@ -21,16 +21,16 @@ class PlaceSampler
       : visualizer_(visualizer),
         optimal_place_dist_(1.0),
         place_dist_sigma_(0.1),
-        gibbs_max_iter_(100),
-        gibbs_burnin_(20)
+        gibbs_max_iter_(1000000),
+        gibbs_burnin_(1000)
   {}
 
   /** Sets the algorithm parameters. */
-  void setParams(double optimal_place_dist,
-                 double place_dist_sigma)
+  void setParams(int gibbs_max_iter,
+                 int gibbs_burnin)
   {
-    optimal_place_dist_ = optimal_place_dist;
-    place_dist_sigma_ = place_dist_sigma;
+    gibbs_max_iter_ = gibbs_max_iter;
+    gibbs_burnin_ = gibbs_burnin;
   }
 
   /** Samples a grid of place centers for the given

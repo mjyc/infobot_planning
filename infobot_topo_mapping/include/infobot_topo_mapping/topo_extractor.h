@@ -31,7 +31,7 @@ class TopoExtractor
   {}
 
   /** Sets the algorithm parameters. */
-  void setParams(double min_obstacle_dist,
+  void setCostExtractorParams(double min_obstacle_dist,
                  double optimal_view_dist,
                  double min_voronoi_dist,
                  double obstacle_cost_scaling,
@@ -50,6 +50,14 @@ class TopoExtractor
                               obstacle_cost_weight,
                               view_cost_weight,
                               center_cost_weight);
+  }
+
+  void setPlaceSamplerParams(int min_obstacle_dist,
+                             int optimal_view_dist)
+  {
+    ROS_WARN("DOES NOT CHECK INPUT PARAMETERS!! Make sure to use VALID INPUTS!!")
+    place_sampler_.setParams(min_obstacle_dist,
+                             optimal_view_dist);
   }
 
   /** Sets the current topological map. */

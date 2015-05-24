@@ -61,7 +61,7 @@ float PlaceSampler::getPlaceConditional(int hyp_x, int hyp_y,
   int end_y = std::min(hyp_y + radius, place_map.size().height - 1);
 
   // Find the distance to the nearest place
-  // TODO: This should be optimized by e.g.KD-tree
+  // NOTE: This should be optimized by e.g.KD-tree
   float dist = 100000000.0;
   for (int y = start_y; y <= end_y; ++y)
     for (int x = start_x; x <= end_x; ++x)
@@ -112,7 +112,7 @@ float PlaceSampler::getPlaceFactors(int hyp_x, int hyp_y,
   int end_y = std::min(hyp_y + radius, place_map.size().height - 1);
 
   // Find the distance to the nearest place
-  // TODO: This should be optimized by e.g.KD-tree
+  // NOTE: This should be optimized by e.g.KD-tree
   float dist = 100000000.0;
   for (int y = start_y; y <= end_y; ++y)
     for (int x = start_x; x <= end_x; ++x)
@@ -334,7 +334,7 @@ cv::Mat PlaceSampler::samplePlaces(const cv::Mat &goodness_map,
 //     }
 //   }
 
-//   // TODO: This should be optimized by e.g.KD-tree
+//   // NOTE: This should be optimized by e.g.KD-tree
 //   for (int y = start_y; y <= end_y; ++y)
 //     for (int x = start_x; x <= end_x; ++x)
 //     {
@@ -449,7 +449,7 @@ cv::Mat PlaceSampler::samplePlaces(const cv::Mat &goodness_map,
 //   int end_y = std::min(hyp_y + radius, place_map.size().height - 1);
 
 //   // Find the distance to the nearest place
-//   // TODO: This should be optimized by e.g.KD-tree
+//   // NOTE: This should be optimized by e.g.KD-tree
 //   float dist = 100000000.0;
 //   int dist_x = -1;
 //   int dist_y = -1;

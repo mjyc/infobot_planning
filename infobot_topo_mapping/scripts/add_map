@@ -21,15 +21,15 @@ def main():
     transforms = [transform]
 
     # Call service
-    rospy.wait_for_service('/topo_mapping/process_current_metric_map')
+    rospy.wait_for_service("/topo_mapping/process_current_metric_map")
     try:
         process_current_metric_map = rospy.ServiceProxy(
-            '/topo_mapping/process_current_metric_map', ProcessCurrentMetricMap)
+            "/topo_mapping/process_current_metric_map", ProcessCurrentMetricMap)
         process_current_metric_map(transforms, Pose2D())
     except rospy.ServiceException, e:
         print "Service call failed: %s" % e
 
 
 # -----------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

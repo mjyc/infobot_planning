@@ -35,14 +35,14 @@ Node::Node(int argc, char **argv)
   ROS_INFO("Publishing to topological map topic '%s'.", topo_map_pub_.getTopic().c_str());
 
   // Dynamic reconfigure
-  dynamic_reconfigure::Server<SaraTopoMappingConfig>::CallbackType config_cb =
+  dynamic_reconfigure::Server<InfoBotTopoMappingConfig>::CallbackType config_cb =
       boost::bind(&Node::reconfigureCallback, this, _1, _2);
   config_server_.setCallback(config_cb);
 }
 
 
 // -----------------------------------------------------------------------------
-void Node::reconfigureCallback(const SaraTopoMappingConfig &new_config,
+void Node::reconfigureCallback(const InfoBotTopoMappingConfig &new_config,
                                const uint32_t level)
 {
   if (level&1)
@@ -64,15 +64,23 @@ void Node::reconfigureCallback(const SaraTopoMappingConfig &new_config,
     ROS_INFO("-> obstacle_cost_weight: %f", new_config.obstacle_cost_weight);
     ROS_INFO("-> view_cost_weight: %f", new_config.view_cost_weight);
     ROS_INFO("-> center_cost_weight: %f", new_config.center_cost_weight);
-    topo_extractor_.setParams(new_config.min_obstacle_dist,
-                              new_config.optimal_view_dist,
-                              new_config.min_voronoi_dist,
-                              new_config.obstacle_cost_scaling,
-                              new_config.view_cost_scaling,
-                              new_config.center_cost_scaling,
-                              new_config.obstacle_cost_weight,
-                              new_config.view_cost_weight,
-                              new_config.center_cost_weight);
+    topo_extractor_.setCostExtractorParams(new_config.min_obstacle_dist,
+                                           new_config.optimal_view_dist,
+                                           new_config.min_voronoi_dist,
+                                           new_config.obstacle_cost_scaling,
+                                           new_config.view_cost_scaling,
+                                           new_config.center_cost_scaling,
+                                           new_config.obstacle_cost_weight,
+                                           new_config.view_cost_weight,
+                                           new_config.center_cost_weight);
+  }
+
+  if (level&3)
+  {
+    ROS_INFO("-> gibbs_max_iter: %d", new_config.gibbs_max_iter);
+    ROS_INFO("-> gibbs_burnin: %d", new_config.gibbs_burnin);
+    topo_extractor_.setPlaceSamplerParams(new_config.gibbs_max_iter,
+                                          new_config.gibbs_burnin);
   }
 }
 

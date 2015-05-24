@@ -1,9 +1,0 @@
-min_obstacle_dist: 0.3
-optimal_view_dist: 1.0
-min_voronoi_dist:  0.25
-obstacle_cost_scaling: 5.0
-view_cost_scaling: 5.0
-center_cost_scaling: 10.0
-obstacle_cost_weight: 1.0
-view_cost_weight: 2.0
-center_cost_weight: 3.0
