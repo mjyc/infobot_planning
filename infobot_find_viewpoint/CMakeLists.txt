@@ -3,6 +3,7 @@ project(infobot_find_viewpoint)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  dynamic_reconfigure
   geometry_msgs
   octomap_msgs
   infobot_map_msgs
@@ -12,10 +13,12 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(octomap REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+generate_dynamic_reconfigure_options(cfg/InfoBotFindViewpoint.cfg)
+
 catkin_package(
     # INCLUDE_DIRS include
     # LIBRARIES
-    CATKIN_DEPENDS roscpp geometry_msgs octomap_msgs infobot_map_msgs infobot_topo_msgs visualization_msgs
+    CATKIN_DEPENDS roscpp dynamic_reconfigure geometry_msgs octomap_msgs infobot_map_msgs infobot_topo_msgs visualization_msgs
     DEPENDS octomap
 )
 
@@ -25,6 +28,7 @@ include_directories(include
 )
 
 add_executable(pmap_to_octomap src/pmap_to_octomap_node.cpp)
+add_dependencies(pmap_to_octomap ${PROJECT_NAME}_gencfg)
 add_dependencies(pmap_to_octomap ${catkin_EXPORTED_TARGETS})
 target_link_libraries(pmap_to_octomap
   ${catkin_LIBRARIES}
@@ -32,6 +36,7 @@ target_link_libraries(pmap_to_octomap
 )
 
 add_executable(visibility_reasoner src/visibility_reasoner_node.cpp)
+add_dependencies(visibility_reasoner ${PROJECT_NAME}_gencfg)
 add_dependencies(visibility_reasoner ${catkin_EXPORTED_TARGETS})
 target_link_libraries(visibility_reasoner
   ${catkin_LIBRARIES}

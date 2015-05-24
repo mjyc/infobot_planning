@@ -3,31 +3,22 @@
 #include <vector>
 
 #include <ros/ros.h>
+#include <dynamic_reconfigure/server.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Pose.h>
 #include <octomap/octomap.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <infobot_find_viewpoint/InfoBotFindViewpointConfig.h>
 #include <infobot_find_viewpoint_msgs/GetProbabilityOctomapSurface.h>
 #include <infobot_find_viewpoint_msgs/GetProbabilityOctomapHeight.h>
 #include <infobot_find_viewpoint_msgs/ComputeVisibilityValue.h>
 #include <infobot_find_viewpoint_msgs/ComputeVisibilityValues.h>
-#include <infobot_topo_msgs/TopologicalMap.h>
-#include <infobot_topo_msgs/GetTopologicalMap.h>
 
 #include "./visibility_reasoner_utils.h"
 
 
 class VisibilityReasonerNode
 {
-public:
-  // Camera parameters are from: http://openkinect.org/wiki/Imaging_Information
-  static const double DEFAULT_HORIZONTAL_ANGLE_OF_VIEW;  // in radians
-  static const double DEFAULT_VERTICAL_ANGLE_OF_VIEW;  // in radians
-  static const double DEFAULT_DEPTH_MAX;  // in m
-  static const int DEFAULT_FOV_GRID_RESOLUTION;
-  static const double DEFAULT_HEIGHT_MEAN;
-  static const double DEFAULT_HEIGHT_VAR;
-
 public:
   VisibilityReasonerNode(int argc, char **argv);
 
@@ -44,6 +35,8 @@ private:
   ros::Publisher visibleOctomapPub_;
   ros::Publisher visValsMarkersPub_;
 
+  dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointConfig> config_server_;
+
   double horizontal_angle_of_view_;
   double vertical_angle_of_view_;
   double depth_max_;
@@ -52,18 +45,21 @@ private:
   double height_var_;
 
 private:
+  void reconfigureCallback(const infobot_find_viewpoint::InfoBotFindViewpointConfig &new_config,
+                           uint32_t level);
   bool computeVisValueSrvCb(infobot_find_viewpoint_msgs::ComputeVisibilityValue::Request  &req,
                             infobot_find_viewpoint_msgs::ComputeVisibilityValue::Response &res);
   bool computeVisValuesSrvCb(infobot_find_viewpoint_msgs::ComputeVisibilityValues::Request  &req,
                              infobot_find_viewpoint_msgs::ComputeVisibilityValues::Response &res);
 };
 
-const double VisibilityReasonerNode::DEFAULT_HORIZONTAL_ANGLE_OF_VIEW = 96.80 * M_PI / 180;  // in radians
-const double VisibilityReasonerNode::DEFAULT_VERTICAL_ANGLE_OF_VIEW = 79.40 * M_PI / 180;  // in radians
-const double VisibilityReasonerNode::DEFAULT_DEPTH_MAX = 10;  // in m
-const int VisibilityReasonerNode::DEFAULT_FOV_GRID_RESOLUTION = 50;
-const double VisibilityReasonerNode::DEFAULT_HEIGHT_MEAN = 1.65;
-const double VisibilityReasonerNode::DEFAULT_HEIGHT_VAR = 0.1;
+// const double VisibilityReasonerNode::DEFAULT_HORIZONTAL_ANGLE_OF_VIEW = 96.80 * M_PI / 180;  // in radians
+// const double VisibilityReasonerNode::DEFAULT_VERTICAL_ANGLE_OF_VIEW = 79.40 * M_PI / 180;  // in radians
+// const double VisibilityReasonerNode::DEFAULT_DEPTH_MAX = 10;  // in m
+// const int VisibilityReasonerNode::DEFAULT_FOV_GRID_RESOLUTION = 50;
+// const double VisibilityReasonerNode::DEFAULT_HEIGHT_MEAN = 1.65;
+// const double VisibilityReasonerNode::DEFAULT_HEIGHT_VAR = 0.05;
+
 
 //----------------------------------------------------------------------
 VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
@@ -79,18 +75,34 @@ VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
   cameraFOVMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_reasoner_fov_markers", 10, true);
   visValsMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_values_markers", 10, true);
 
-  privateNh_.param("horizontal_angle_of_view", horizontal_angle_of_view_, DEFAULT_HORIZONTAL_ANGLE_OF_VIEW);
-  privateNh_.param("vertical_angle_of_view", vertical_angle_of_view_, DEFAULT_VERTICAL_ANGLE_OF_VIEW);
-  privateNh_.param("depth_max", depth_max_, DEFAULT_DEPTH_MAX);
-  privateNh_.param("fov_grid_res", fov_grid_res_, DEFAULT_FOV_GRID_RESOLUTION);
-  privateNh_.param("height_mean", height_mean_, DEFAULT_HEIGHT_MEAN);
-  privateNh_.param("height_var", height_var_, DEFAULT_HEIGHT_VAR);
+  dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointConfig>::CallbackType config_cb =
+      boost::bind(&VisibilityReasonerNode::reconfigureCallback, this, _1, _2);
+  config_server_.setCallback(config_cb);
 }
 
 //----------------------------------------------------------------------
 void VisibilityReasonerNode::spin()
 {
   ros::spin();
+}
+
+void VisibilityReasonerNode::reconfigureCallback(const infobot_find_viewpoint::InfoBotFindViewpointConfig &new_config,
+                                                 const uint32_t level)
+{
+  ROS_INFO("Setting parameters:");
+  ROS_INFO("-> horizontal_angle_of_view: %f", new_config.horizontal_angle_of_view);
+  ROS_INFO("-> vertical_angle_of_view: %f", new_config.vertical_angle_of_view);
+  ROS_INFO("-> depth_max: %f", new_config.depth_max);
+  ROS_INFO("-> fov_grid_resolution: %f", new_config.fov_grid_res);
+  ROS_INFO("-> height_mean: %f", new_config.height_mean);
+  ROS_INFO("-> height_var: %f", new_config.height_var);
+
+  horizontal_angle_of_view_ = new_config.horizontal_angle_of_view;
+  vertical_angle_of_view_ = new_config.vertical_angle_of_view;
+  depth_max_ = new_config.depth_max;
+  fov_grid_res_ = new_config.fov_grid_res;
+  height_mean_ = new_config.height_mean;
+  height_var_ = new_config.height_var;
 }
 
 bool VisibilityReasonerNode::computeVisValueSrvCb(
