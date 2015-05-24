@@ -55,7 +55,7 @@ class TopoExtractor
   void setPlaceSamplerParams(int min_obstacle_dist,
                              int optimal_view_dist)
   {
-    ROS_WARN("DOES NOT CHECK INPUT PARAMETERS!! Make sure to use VALID INPUTS!!")
+    ROS_WARN("DOES NOT CHECK INPUT PARAMETERS!! Make sure to use VALID INPUTS!!");
     place_sampler_.setParams(min_obstacle_dist,
                              optimal_view_dist);
   }
