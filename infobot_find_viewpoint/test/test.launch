@@ -1,18 +1,23 @@
 <launch>
 
-  <arg name="exclude_sim" value="false" />
+  <arg name="exclude_sim" default="false" />
+  <arg name="exclude_rviz" default="false" />
 
   <!-- Simulation -->
   <include file="$(find infobot_uw_morse)/launch/simple.launch" unless="$(arg exclude_sim)">
-
   </include>
 
+  <!-- Rviz -->
+  <include file="$(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_sim)">
+  </include>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_rviz)"/>
+
   <!-- FindViewpoint -->
-  <include file="$(find infobot_octomap_store)/launch/octomap_store.launch">
-    <arg name="map_files_server" value="$(find infobot_find_viewpoint)/test" />
-    <arg name="pmap_files_server" value="$(find infobot_find_viewpoint)/test" />
-    <arg name="octomap_files_server" value="$(find infobot_find_viewpoint)/test" />
-    <arg name="topomap_files_server" value="$(find infobot_find_viewpoint)/test" />
+  <include file="$(find infobot_find_viewpoint)/launch/find_viewpoint.launch">
+    <arg name="map_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
+    <arg name="pmap_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
+    <arg name="octomap_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
+    <arg name="topomap_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
   </include>
 
 </launch>

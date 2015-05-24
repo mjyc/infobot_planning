@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+import rospy
+
+import sys
+
+from tf.transformations import quaternion_from_euler
+from geometry_msgs.msg import Pose
+from infobot_find_viewpoint_msgs.srv import *
+from infobot_map_msgs.srv import *
+
+
+def compute_vis_value_client(camera_pose, mode, pmap_filename, pmap_frame_id, octomap_filename, octomap_frame_id):
+    rospy.wait_for_service("compute_vis_value")
+    try:
+        compute_vis_value = rospy.ServiceProxy("compute_vis_value", ComputeVisibilityValue)
+        resp1 = compute_vis_value(camera_pose, mode, pmap_filename, pmap_frame_id, octomap_filename, octomap_frame_id)
+        return resp1
+    except rospy.ServiceException, e:
+        print "Service call failed: %s" % e
+
+if __name__ == "__main__":
+
+    rospy.wait_for_service("publish_pmap")
+    publish_pmap = rospy.ServiceProxy("publish_pmap", PublishProbabilityMap)
+    if not publish_pmap("room.yaml", ""):  # "" == "map"
+        sys.exit(1)
+
+    rospy.wait_for_service("publish_octomap")
+    publish_octomap = rospy.ServiceProxy("publish_octomap", PublishOctomap)
+    if not publish_octomap("corridor-model.bt", ""):  # "" == "map"
+        sys.exit(1)
+
+    pose = Pose()
+    pose.position.x = 8.83227
+    pose.position.y = 13.3153
+    pose.position.z = 1.314  # prosilica frame z-value
+    q = quaternion_from_euler(0, 0, -2.55015)
+    pose.orientation.x = q[0]
+    pose.orientation.y = q[1]
+    pose.orientation.z = q[2]
+    pose.orientation.w = q[3]
+    print compute_vis_value_client(pose,
+                                   ComputeVisibilityValueRequest.SURFACE,
+                                   "",  # published pmap_filaname
+                                   "",  # published pmap_frame
+                                   "",  # published octomap_filaname
+                                   ""   # published octomap_frame
+                                   )

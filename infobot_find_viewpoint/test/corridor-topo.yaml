@@ -1,7 +1,7 @@
-id: real-floor4
+id: corridor
 places:
   - id: 1
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1
         x: 7.200000762939453
@@ -101,9 +101,9 @@ places:
         y: 19.79999923706055
         theta: 5.759586531581287
     id: 2
-    metric_map_id: real-floor4
+    metric_map_id: corridor
   - id: 3
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 25
         x: 7.600002288818359
@@ -153,7 +153,7 @@ places:
         x: 7.600002288818359
         y: 18.75
         theta: 5.759586531581287
-  - metric_map_id: real-floor4
+  - metric_map_id: corridor
     views:
       - id: 37
         y: 17.70000076293945
@@ -205,7 +205,7 @@ places:
         theta: 5.759586531581287
     id: 4
   - id: 5
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 49
         x: 8.200000762939453
@@ -256,7 +256,7 @@ places:
         y: 15.79999923706055
         theta: 5.759586531581287
   - id: 6
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 61
         x: -4.700000762939453
@@ -307,7 +307,7 @@ places:
         y: 15.65000152587891
         theta: 5.759586531581287
   - id: 7
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 73
         x: -3.700000762939453
@@ -358,7 +358,7 @@ places:
         y: 15
         theta: 5.759586531581287
   - id: 8
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 85
         x: -2.5
@@ -409,7 +409,7 @@ places:
         y: 14.79999923706055
         theta: 5.759586531581287
   - id: 9
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 97
         x: 8.400001525878906
@@ -460,7 +460,7 @@ places:
         y: 14.79999923706055
         theta: 5.759586531581287
   - id: 10
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 109
         x: -3.649997711181641
@@ -511,7 +511,7 @@ places:
         y: 13.95000076293945
         theta: 5.759586531581287
   - id: 11
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 121
         x: -4.649997711181641
@@ -562,7 +562,7 @@ places:
         y: 13.79999923706055
         theta: 5.759586531581287
   - id: 12
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 133
         x: -2.349998474121094
@@ -613,7 +613,7 @@ places:
         y: 13.40000152587891
         theta: 5.759586531581287
   - id: 13
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 145
         x: 8.650001525878906
@@ -664,7 +664,7 @@ places:
         y: 13.35000228881836
         theta: 5.759586531581287
   - id: 14
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 157
         x: -3.649997711181641
@@ -715,7 +715,7 @@ places:
         y: 12.95000076293945
         theta: 5.759586531581287
   - id: 15
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 169
         x: -4.599998474121094
@@ -766,7 +766,7 @@ places:
         y: 12.60000228881836
         theta: 5.759586531581287
   - id: 16
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 181
         x: 8.850002288818359
@@ -817,7 +817,7 @@ places:
         y: 12.35000228881836
         theta: 5.759586531581287
   - id: 17
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 193
         x: -3.399997711181641
@@ -868,7 +868,7 @@ places:
         y: 11.79999923706055
         theta: 5.759586531581287
   - id: 18
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 205
         x: -4.599998474121094
@@ -919,7 +919,7 @@ places:
         y: 11.54999923706055
         theta: 5.759586531581287
   - id: 19
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 217
         x: 9
@@ -970,7 +970,7 @@ places:
         y: 11.29999923706055
         theta: 5.759586531581287
   - id: 20
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 229
         x: -5.75
@@ -1021,7 +1021,7 @@ places:
         y: 10.95000076293945
         theta: 5.759586531581287
   - id: 21
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 241
         x: -3.950000762939453
@@ -1072,7 +1072,7 @@ places:
         y: 10.54999923706055
         theta: 5.759586531581287
   - id: 22
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 253
         x: 9.200000762939453
@@ -1123,7 +1123,7 @@ places:
         y: 10.25
         theta: 5.759586531581287
   - id: 23
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 265
         x: -2.950000762939453
@@ -1174,7 +1174,7 @@ places:
         y: 10.10000228881836
         theta: 5.759586531581287
   - id: 24
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 277
         x: -4.899997711181641
@@ -1225,7 +1225,7 @@ places:
         y: 10
         theta: 5.759586531581287
   - id: 25
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 289
         x: -3.799999237060547
@@ -1276,7 +1276,7 @@ places:
         y: 9.549999237060547
         theta: 5.759586531581287
   - id: 26
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 301
         x: 2.5
@@ -1327,7 +1327,7 @@ places:
         y: 8.950000762939453
         theta: 5.759586531581287
   - id: 27
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 313
         x: 1.5
@@ -1378,7 +1378,7 @@ places:
         y: 8.900001525878906
         theta: 5.759586531581287
   - id: 28
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 325
         x: -1.849998474121094
@@ -1429,7 +1429,7 @@ places:
         y: 8.850002288818359
         theta: 5.759586531581287
   - id: 29
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 337
         x: -0.8499984741210938
@@ -1480,7 +1480,7 @@ places:
         y: 8.850002288818359
         theta: 5.759586531581287
   - id: 30
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 349
         x: 4.350002288818359
@@ -1531,7 +1531,7 @@ places:
         y: 8.850002288818359
         theta: 5.759586531581287
   - id: 31
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 361
         x: 5.600002288818359
@@ -1582,7 +1582,7 @@ places:
         y: 8.850002288818359
         theta: 5.759586531581287
   - id: 32
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 373
         x: 6.700000762939453
@@ -1633,7 +1633,7 @@ places:
         y: 8.850002288818359
         theta: 5.759586531581287
   - id: 33
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 385
         x: 7.75
@@ -1684,7 +1684,7 @@ places:
         y: 8.850002288818359
         theta: 5.759586531581287
   - id: 34
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 397
         x: -4.700000762939453
@@ -1735,7 +1735,7 @@ places:
         y: 8.799999237060547
         theta: 5.759586531581287
   - id: 35
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 409
         x: -2.950000762939453
@@ -1786,7 +1786,7 @@ places:
         y: 8.799999237060547
         theta: 5.759586531581287
   - id: 36
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 421
         x: 0.5
@@ -1837,7 +1837,7 @@ places:
         y: 8.650001525878906
         theta: 5.759586531581287
   - id: 37
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 433
         x: 9.400001525878906
@@ -1888,7 +1888,7 @@ places:
         y: 8.350002288818359
         theta: 5.759586531581287
   - id: 38
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 445
         x: 0.5
@@ -1988,9 +1988,9 @@ places:
         y: 7.350002288818359
         theta: 5.759586531581287
     id: 39
-    metric_map_id: real-floor4
+    metric_map_id: corridor
   - id: 40
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 469
         x: 9.650001525878906
@@ -2041,7 +2041,7 @@ places:
         y: 6.350002288818359
         theta: 5.759586531581287
   - id: 41
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 481
         x: 0.4500007629394531
@@ -2092,7 +2092,7 @@ places:
         y: 6
         theta: 5.759586531581287
   - id: 42
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 493
         x: 9.75
@@ -2143,7 +2143,7 @@ places:
         y: 5.350002288818359
         theta: 5.759586531581287
   - id: 43
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 505
         x: 0.4000015258789062
@@ -2194,7 +2194,7 @@ places:
         y: 4.600002288818359
         theta: 5.759586531581287
   - id: 44
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 517
         x: 9.799999237060547
@@ -2245,7 +2245,7 @@ places:
         y: 4.350002288818359
         theta: 5.759586531581287
   - id: 45
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 529
         x: 0.2999992370605469
@@ -2296,7 +2296,7 @@ places:
         y: 3.600002288818359
         theta: 5.759586531581287
   - id: 46
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 541
         x: -35.80000019073486
@@ -2347,7 +2347,7 @@ places:
         y: 2.799999237060547
         theta: 5.759586531581287
   - id: 47
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 553
         x: 1.600002288818359
@@ -2398,7 +2398,7 @@ places:
         y: 2.600002288818359
         theta: 5.759586531581287
   - id: 48
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 565
         x: 0.6000022888183594
@@ -2449,7 +2449,7 @@ places:
         y: 2.5
         theta: 5.759586531581287
   - id: 49
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 577
         x: -36.19999980926514
@@ -2500,7 +2500,7 @@ places:
         y: 1.850002288818359
         theta: 5.759586531581287
   - id: 50
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 589
         x: 9.950000762939453
@@ -2551,7 +2551,7 @@ places:
         y: 1.549999237060547
         theta: 5.759586531581287
   - id: 51
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 601
         x: 0.7000007629394531
@@ -2602,7 +2602,7 @@ places:
         y: 1.25
         theta: 5.759586531581287
   - id: 52
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 613
         x: -36
@@ -2653,7 +2653,7 @@ places:
         y: 0.8500003814697266
         theta: 5.759586531581287
   - id: 53
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 625
         x: 10
@@ -2704,7 +2704,7 @@ places:
         y: 0.5500011444091797
         theta: 5.759586531581287
   - id: 54
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 637
         x: 0.7000007629394531
@@ -2755,7 +2755,7 @@ places:
         y: 0.25
         theta: 5.759586531581287
   - id: 55
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 649
         x: 2.299999237060547
@@ -2806,7 +2806,7 @@ places:
         y: -0.1000003814697266
         theta: 5.759586531581287
   - id: 56
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 661
         x: -36
@@ -2857,7 +2857,7 @@ places:
         y: -0.8500003814697266
         theta: 5.759586531581287
   - id: 57
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 673
         x: 1.600002288818359
@@ -2908,7 +2908,7 @@ places:
         y: -0.8500003814697266
         theta: 5.759586531581287
   - id: 58
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 685
         x: 0.3500022888183594
@@ -2959,7 +2959,7 @@ places:
         y: -0.9499988555908203
         theta: 5.759586531581287
   - id: 59
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 697
         x: 10.04999923706055
@@ -3010,7 +3010,7 @@ places:
         y: -1.299999237060547
         theta: 5.759586531581287
   - id: 60
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 709
         x: -37.25
@@ -3061,7 +3061,7 @@ places:
         y: -1.350000381469727
         theta: 5.759586531581287
   - id: 61
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 721
         x: 0.3500022888183594
@@ -3112,7 +3112,7 @@ places:
         y: -1.94999885559082
         theta: 5.759586531581287
   - id: 62
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 733
         x: 10.04999923706055
@@ -3163,7 +3163,7 @@ places:
         y: -2.350000381469727
         theta: 5.759586531581287
   - id: 63
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 745
         x: -37.14999961853027
@@ -3214,7 +3214,7 @@ places:
         y: -2.399999618530273
         theta: 5.759586531581287
   - id: 64
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 757
         x: -36.14999961853027
@@ -3265,7 +3265,7 @@ places:
         y: -2.649999618530273
         theta: 5.759586531581287
   - id: 65
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 769
         x: 10.04999923706055
@@ -3316,7 +3316,7 @@ places:
         y: -3.350000381469727
         theta: 5.759586531581287
   - id: 66
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 781
         x: -35.55000019073486
@@ -3367,7 +3367,7 @@ places:
         y: -3.44999885559082
         theta: 5.759586531581287
   - id: 67
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 793
         x: -34.5
@@ -3418,7 +3418,7 @@ places:
         y: -3.600000381469727
         theta: 5.759586531581287
   - id: 68
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 805
         x: 0.4000015258789062
@@ -3469,7 +3469,7 @@ places:
         y: -3.600000381469727
         theta: 5.759586531581287
   - id: 69
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 817
         x: -36.55000019073486
@@ -3569,9 +3569,9 @@ places:
         y: -3.799999237060547
         theta: 5.759586531581287
     id: 70
-    metric_map_id: real-floor4
+    metric_map_id: corridor
   - id: 71
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 841
         x: -32.34999942779541
@@ -3622,7 +3622,7 @@ places:
         y: -4.100000381469727
         theta: 5.759586531581287
   - id: 72
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 853
         x: 10.04999923706055
@@ -3673,7 +3673,7 @@ places:
         y: -4.44999885559082
         theta: 5.759586531581287
   - id: 73
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 865
         x: 0.5
@@ -3724,7 +3724,7 @@ places:
         y: -4.649999618530273
         theta: 5.759586531581287
   - id: 74
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 877
         x: -36.5
@@ -3775,7 +3775,7 @@ places:
         y: -5.049999237060547
         theta: 5.759586531581287
   - id: 75
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 889
         x: 10.04999923706055
@@ -3826,7 +3826,7 @@ places:
         y: -5.799999237060547
         theta: 5.759586531581287
   - id: 76
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 901
         x: -36.5
@@ -3877,7 +3877,7 @@ places:
         y: -6.19999885559082
         theta: 5.759586531581287
   - id: 77
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 913
         x: 0.6500015258789062
@@ -3928,7 +3928,7 @@ places:
         y: -6.549999237060547
         theta: 5.759586531581287
   - id: 78
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 925
         x: 10
@@ -3979,7 +3979,7 @@ places:
         y: -6.799999237060547
         theta: 5.759586531581287
   - id: 79
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 937
         x: 0.5499992370605469
@@ -4030,7 +4030,7 @@ places:
         y: -7.600000381469727
         theta: 5.759586531581287
   - id: 80
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 949
         x: -36.64999961853027
@@ -4081,7 +4081,7 @@ places:
         y: -7.69999885559082
         theta: 5.759586531581287
   - id: 81
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 961
         x: 10
@@ -4132,7 +4132,7 @@ places:
         y: -7.799999237060547
         theta: 5.759586531581287
   - id: 82
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 973
         x: 10
@@ -4183,7 +4183,7 @@ places:
         y: -8.799999237060547
         theta: 5.759586531581287
   - id: 83
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 985
         x: 0.5499992370605469
@@ -4234,7 +4234,7 @@ places:
         y: -9.44999885559082
         theta: 5.759586531581287
   - id: 84
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 997
         x: -36.55000019073486
@@ -4285,7 +4285,7 @@ places:
         y: -9.549999237060547
         theta: 5.759586531581287
   - id: 85
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1009
         x: 10.04999923706055
@@ -4336,7 +4336,7 @@ places:
         y: -9.850000381469727
         theta: 5.759586531581287
   - id: 86
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1021
         x: 0.5499992370605469
@@ -4387,7 +4387,7 @@ places:
         y: -10.44999885559082
         theta: 5.759586531581287
   - id: 87
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1033
         x: -36.89999961853027
@@ -4438,7 +4438,7 @@ places:
         y: -10.64999961853027
         theta: 5.759586531581287
   - id: 88
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1045
         x: 1.950000762939453
@@ -4489,7 +4489,7 @@ places:
         y: -10.79999923706055
         theta: 5.759586531581287
   - id: 89
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1057
         x: 10
@@ -4540,7 +4540,7 @@ places:
         y: -10.85000038146973
         theta: 5.759586531581287
   - id: 90
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1069
         x: -26.85000038146973
@@ -4591,7 +4591,7 @@ places:
         y: -10.89999961853027
         theta: 5.759586531581287
   - id: 91
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1081
         x: -5.099998474121094
@@ -4642,7 +4642,7 @@ places:
         y: -10.94999885559082
         theta: 5.759586531581287
   - id: 92
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1093
         x: -3
@@ -4693,7 +4693,7 @@ places:
         y: -10.94999885559082
         theta: 5.759586531581287
   - id: 93
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1105
         x: -6.25
@@ -4744,7 +4744,7 @@ places:
         y: -11
         theta: 5.759586531581287
   - id: 94
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1117
         x: -4
@@ -4795,7 +4795,7 @@ places:
         y: -11
         theta: 5.759586531581287
   - id: 95
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1129
         x: -0.4500007629394531
@@ -4846,7 +4846,7 @@ places:
         y: -11
         theta: 5.759586531581287
   - id: 96
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1141
         x: -34.64999961853027
@@ -4897,7 +4897,7 @@ places:
         y: -11.04999923706055
         theta: 5.759586531581287
   - id: 97
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1153
         x: -32.5
@@ -4948,7 +4948,7 @@ places:
         y: -11.04999923706055
         theta: 5.759586531581287
   - id: 98
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1165
         x: -23.14999961853027
@@ -4999,7 +4999,7 @@ places:
         y: -11.04999923706055
         theta: 5.759586531581287
   - id: 99
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1177
         x: -9.799999237060547
@@ -5050,7 +5050,7 @@ places:
         y: -11.04999923706055
         theta: 5.759586531581287
   - id: 100
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1189
         x: -7.25
@@ -5101,7 +5101,7 @@ places:
         y: -11.04999923706055
         theta: 5.759586531581287
   - id: 101
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1201
         x: -35.80000019073486
@@ -5152,7 +5152,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 102
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1213
         x: -33.64999961853027
@@ -5203,7 +5203,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 103
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1225
         x: -30.94999885559082
@@ -5254,7 +5254,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 104
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1237
         x: -29.94999885559082
@@ -5354,9 +5354,9 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
     id: 105
-    metric_map_id: real-floor4
+    metric_map_id: corridor
   - id: 106
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1261
         x: -25.85000038146973
@@ -5407,7 +5407,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 107
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1273
         x: -24.85000038146973
@@ -5458,7 +5458,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 108
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1285
         x: -21
@@ -5509,7 +5509,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 109
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1297
         x: -19.94999885559082
@@ -5560,7 +5560,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 110
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1309
         x: -17.89999961853027
@@ -5611,7 +5611,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 111
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1321
         x: -16.89999961853027
@@ -5662,7 +5662,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 112
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1333
         x: -15.85000038146973
@@ -5713,7 +5713,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 113
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1345
         x: -13.79999923706055
@@ -5764,7 +5764,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 114
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1357
         x: -12.39999771118164
@@ -5815,7 +5815,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 115
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1369
         x: -10.95000076293945
@@ -5866,7 +5866,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 116
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1381
         x: -8.599998474121094
@@ -5917,7 +5917,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 117
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1393
         x: -1.450000762939453
@@ -5968,7 +5968,7 @@ places:
         y: -11.10000038146973
         theta: 5.759586531581287
   - id: 118
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1405
         x: -22
@@ -6019,7 +6019,7 @@ places:
         y: -11.14999961853027
         theta: 5.759586531581287
   - id: 119
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1417
         x: -18.89999961853027
@@ -6070,7 +6070,7 @@ places:
         y: -11.14999961853027
         theta: 5.759586531581287
   - id: 120
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1429
         x: -14.84999847412109
@@ -6121,7 +6121,7 @@ places:
         y: -11.19999885559082
         theta: 5.759586531581287
   - id: 121
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1441
         x: 0.5
@@ -6172,7 +6172,7 @@ places:
         y: -11.44999885559082
         theta: 5.759586531581287
   - id: 122
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1453
         x: 2.549999237060547
@@ -6223,7 +6223,7 @@ places:
         y: -11.60000038146973
         theta: 5.759586531581287
   - id: 123
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1465
         x: 10
@@ -6274,7 +6274,7 @@ places:
         y: -11.85000038146973
         theta: 5.759586531581287
   - id: 124
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1477
         x: -36.44999980926514
@@ -6325,7 +6325,7 @@ places:
         y: -11.89999961853027
         theta: 5.759586531581287
   - id: 125
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1489
         x: 0.4500007629394531
@@ -6376,7 +6376,7 @@ places:
         y: -12.44999885559082
         theta: 5.759586531581287
   - id: 126
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1501
         x: 10.20000076293945
@@ -6427,7 +6427,7 @@ places:
         y: -12.85000038146973
         theta: 5.759586531581287
   - id: 127
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1513
         x: -36.55000019073486
@@ -6478,7 +6478,7 @@ places:
         y: -13.04999923706055
         theta: 5.759586531581287
   - id: 128
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1525
         x: 2.600002288818359
@@ -6529,7 +6529,7 @@ places:
         y: -13.04999923706055
         theta: 5.759586531581287
   - id: 129
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1537
         x: 0.5499992370605469
@@ -6580,7 +6580,7 @@ places:
         y: -13.5
         theta: 5.759586531581287
   - id: 130
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1549
         x: 9.900001525878906
@@ -6631,7 +6631,7 @@ places:
         y: -13.85000038146973
         theta: 5.759586531581287
   - id: 131
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1561
         x: -36.55000019073486
@@ -6682,7 +6682,7 @@ places:
         y: -14.44999885559082
         theta: 5.759586531581287
   - id: 132
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1573
         x: 0.5499992370605469
@@ -6733,7 +6733,7 @@ places:
         y: -15.34999942779541
         theta: 5.759586531581287
   - id: 133
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1585
         x: -36.55000019073486
@@ -6784,7 +6784,7 @@ places:
         y: -15.5
         theta: 5.759586531581287
   - id: 134
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1597
         x: 9.900001525878906
@@ -6835,7 +6835,7 @@ places:
         y: -15.84999942779541
         theta: 5.759586531581287
   - id: 135
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1609
         x: 0.6000022888183594
@@ -6886,7 +6886,7 @@ places:
         y: -16.34999942779541
         theta: 5.759586531581287
   - id: 136
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1621
         x: -36.64999961853027
@@ -6937,7 +6937,7 @@ places:
         y: -16.5
         theta: 5.759586531581287
   - id: 137
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1633
         x: 0.5
@@ -6988,7 +6988,7 @@ places:
         y: -17.34999942779541
         theta: 5.759586531581287
   - id: 138
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1645
         x: -36.5
@@ -7039,7 +7039,7 @@ places:
         y: -17.5
         theta: 5.759586531581287
   - id: 139
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1657
         x: 9.950000762939453
@@ -7139,9 +7139,9 @@ places:
         y: -18.44999980926514
         theta: 5.759586531581287
     id: 140
-    metric_map_id: real-floor4
+    metric_map_id: corridor
   - id: 141
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1681
         x: 9.900001525878906
@@ -7241,9 +7241,9 @@ places:
         y: -19.25
         theta: 5.759586531581287
     id: 142
-    metric_map_id: real-floor4
+    metric_map_id: corridor
   - id: 143
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1705
         x: 0.4500007629394531
@@ -7294,7 +7294,7 @@ places:
         y: -19.5
         theta: 5.759586531581287
   - id: 144
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1717
         x: 9.900001525878906
@@ -7345,7 +7345,7 @@ places:
         y: -19.64999961853027
         theta: 5.759586531581287
   - id: 145
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1729
         x: -36.44999980926514
@@ -7396,7 +7396,7 @@ places:
         y: -20.34999942779541
         theta: 5.759586531581287
   - id: 146
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1741
         x: 0.4000015258789062
@@ -7447,7 +7447,7 @@ places:
         y: -20.80000019073486
         theta: 5.759586531581287
   - id: 147
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1753
         x: -19.89999961853027
@@ -7498,7 +7498,7 @@ places:
         y: -21.19999980926514
         theta: 5.759586531581287
   - id: 148
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1765
         x: -2.25
@@ -7549,7 +7549,7 @@ places:
         y: -21.19999980926514
         theta: 5.759586531581287
   - id: 149
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1777
         x: -17.5
@@ -7600,7 +7600,7 @@ places:
         y: -21.25
         theta: 5.759586531581287
   - id: 150
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1789
         x: -9.349998474121094
@@ -7651,7 +7651,7 @@ places:
         y: -21.25
         theta: 5.759586531581287
   - id: 151
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1801
         x: -4.299999237060547
@@ -7702,7 +7702,7 @@ places:
         y: -21.25
         theta: 5.759586531581287
   - id: 152
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1813
         x: -0.6499977111816406
@@ -7753,7 +7753,7 @@ places:
         y: -21.25
         theta: 5.759586531581287
   - id: 153
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1825
         x: 13.40000152587891
@@ -7804,7 +7804,7 @@ places:
         y: -21.25
         theta: 5.759586531581287
   - id: 154
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1837
         x: -33
@@ -7855,7 +7855,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 155
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1849
         x: -29.39999961853027
@@ -7906,7 +7906,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 156
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1861
         x: -20.89999961853027
@@ -7957,7 +7957,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 157
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1873
         x: -18.75
@@ -8008,7 +8008,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 158
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1885
         x: -13.89999771118164
@@ -8059,7 +8059,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 159
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1897
         x: -11.39999771118164
@@ -8110,7 +8110,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 160
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1909
         x: -10.39999771118164
@@ -8161,7 +8161,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 161
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1921
         x: -6.25
@@ -8212,7 +8212,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 162
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1933
         x: -3.25
@@ -8263,7 +8263,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 163
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1945
         x: 5.5
@@ -8314,7 +8314,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 164
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1957
         x: 10
@@ -8365,7 +8365,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 165
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1969
         x: 11.04999923706055
@@ -8416,7 +8416,7 @@ places:
         y: -21.30000019073486
         theta: 5.759586531581287
   - id: 166
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1981
         x: -23.64999961853027
@@ -8467,7 +8467,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 167
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 1993
         x: -21.89999961853027
@@ -8518,7 +8518,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 168
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2005
         x: -8.349998474121094
@@ -8569,7 +8569,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 169
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2017
         x: -7.299999237060547
@@ -8620,7 +8620,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 170
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2029
         x: 2.350002288818359
@@ -8671,7 +8671,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 171
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2041
         x: 3.450000762939453
@@ -8722,7 +8722,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 172
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2053
         x: 4.5
@@ -8773,7 +8773,7 @@ places:
         y: -21.34999942779541
         theta: 5.759586531581287
   - id: 173
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2065
         x: -36.39999961853027
@@ -8824,7 +8824,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 174
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2077
         x: -31.59999942779541
@@ -8875,7 +8875,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 175
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2089
         theta: 0
@@ -8926,7 +8926,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 176
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2101
         x: -28.14999961853027
@@ -8977,7 +8977,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 177
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2113
         x: -26.64999961853027
@@ -9028,7 +9028,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 178
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2125
         x: -25.35000038146973
@@ -9079,7 +9079,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 179
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2137
         x: -16.5
@@ -9130,7 +9130,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 180
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2149
         x: -15
@@ -9181,7 +9181,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 181
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2161
         x: 8.950000762939453
@@ -9232,7 +9232,7 @@ places:
         y: -21.39999961853027
         theta: 5.759586531581287
   - id: 182
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2173
         x: -35.19999980926514
@@ -9283,7 +9283,7 @@ places:
         y: -21.44999980926514
         theta: 5.759586531581287
   - id: 183
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2185
         x: 1.200000762939453
@@ -9334,7 +9334,7 @@ places:
         y: -21.44999980926514
         theta: 5.759586531581287
   - id: 184
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2197
         x: 7.950000762939453
@@ -9385,7 +9385,7 @@ places:
         y: -21.44999980926514
         theta: 5.759586531581287
   - id: 185
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2209
         x: -12.59999847412109
@@ -9436,7 +9436,7 @@ places:
         y: -21.5
         theta: 5.759586531581287
   - id: 186
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2221
         x: 12.25
@@ -9487,7 +9487,7 @@ places:
         y: -21.5
         theta: 5.759586531581287
   - id: 187
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2233
         x: -37.69999980926514
@@ -9538,7 +9538,7 @@ places:
         y: -21.55000019073486
         theta: 5.759586531581287
   - id: 188
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2245
         x: -34
@@ -9589,7 +9589,7 @@ places:
         y: -21.55000019073486
         theta: 5.759586531581287
   - id: 189
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2257
         x: 6.549999237060547
@@ -9640,7 +9640,7 @@ places:
         y: -21.55000019073486
         theta: 5.759586531581287
   - id: 190
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2269
         x: -38.69999980926514
@@ -9691,7 +9691,7 @@ places:
         y: -21.59999942779541
         theta: 5.759586531581287
   - id: 191
-    metric_map_id: real-floor4
+    metric_map_id: corridor
     views:
       - id: 2281
         x: -39.69999980926514
