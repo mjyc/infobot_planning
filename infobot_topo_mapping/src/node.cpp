@@ -77,6 +77,7 @@ void Node::reconfigureCallback(const InfoBotTopoMappingConfig &new_config,
 
   if (level&3)
   {
+    ROS_WARN("DOES NOT CHECK VALIDITY OF BELOW PARAMETERS!! Make sure to use VALID INPUTS!!");
     ROS_INFO("-> gibbs_max_iter: %d", new_config.gibbs_max_iter);
     ROS_INFO("-> gibbs_burnin: %d", new_config.gibbs_burnin);
     topo_extractor_.setPlaceSamplerParams(new_config.gibbs_max_iter,
