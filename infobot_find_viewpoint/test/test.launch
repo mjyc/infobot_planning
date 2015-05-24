@@ -8,8 +8,6 @@
   </include>
 
   <!-- Rviz -->
-  <include file="$(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_sim)">
-  </include>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_rviz)"/>
 
   <!-- FindViewpoint -->
