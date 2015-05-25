@@ -2,108 +2,34 @@
 
 import rospy
 
-import sys
-
-from tf.transformations import quaternion_from_euler
-from geometry_msgs.msg import Pose
-from infobot_find_viewpoint_msgs.srv import *
-from infobot_map_msgs.srv import *
-from infobot_topo_msgs.srv import *
-
-
-def compute_vis_values_client(camera_poses, mode, pmap_frame_id, pmap_filename, octomap_filename, octomap_frame_id):
-    rospy.wait_for_service("compute_vis_values")
-    try:
-        compute_vis_values = rospy.ServiceProxy("compute_vis_values", ComputeVisibilityValues)
-        resp1 = compute_vis_values(camera_poses, mode, pmap_filename, pmap_frame_id, octomap_filename, octomap_frame_id)
-        return resp1
-    except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
-
-
-def compute_vis_value_client(camera_pose, mode, pmap_filename, pmap_frame_id, octomap_filename, octomap_frame_id):
-    rospy.wait_for_service("compute_vis_value")
-    try:
-        compute_vis_value = rospy.ServiceProxy("compute_vis_value", ComputeVisibilityValue)
-        resp1 = compute_vis_value(camera_pose, mode, pmap_filename, pmap_frame_id, octomap_filename, octomap_frame_id)
-        return resp1
-    except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+from test_utils import *
 
 if __name__ == "__main__":
 
-    rospy.wait_for_service("publish_pmap")
-    publish_pmap = rospy.ServiceProxy("publish_pmap", PublishProbabilityMap)
-    publish_pmap_resp = publish_pmap("room.yaml", "")
-    if not publish_pmap_resp or not publish_pmap_resp.success:
-        sys.exit(1)
+    # inputs
+    pmap_filaname = "sim-simple-room1.yaml"
+    octomap_filename = "sim-simple-model.bt"
+    topomap_filename = "sim-simple-topo.yaml"
 
-    rospy.wait_for_service("publish_octomap")
-    publish_octomap = rospy.ServiceProxy("publish_octomap", PublishOctomap)
-    publish_octomap_resp = publish_octomap("corridor-model.bt", "")
-    if not publish_octomap_resp or not publish_octomap_resp.success:
-        sys.exit(1)
+    margin = 5.0
 
-    rospy.wait_for_service("publish_topomap")
-    publish_topomap = rospy.ServiceProxy("publish_topomap", PublishTopologicalMap)
-    publish_topomap_resp = publish_topomap("corridor-topo.yaml", "")
-    if not publish_topomap_resp or not publish_topomap_resp.success:
-        sys.exit(1)
+    mode = ComputeVisibilityValuesRequest.SURFACE
 
-    # Get current pmap, compute bbx, apply filter to topomap
-    rospy.wait_for_service("get_pmap")
-    get_pmap = rospy.ServiceProxy("get_pmap", GetProbabilityMap)
-    get_pmap_resp = get_pmap("", "")
-    if not get_pmap_resp:
-        sys.exit(1)
-    # filter
-    margin = 5.0  # in meters
-    minX = get_pmap_resp.pmap.info.origin.position.x
-    maxX = get_pmap_resp.pmap.info.origin.position.x + \
-        (get_pmap_resp.pmap.info.width * get_pmap_resp.pmap.info.resolution) + margin
-    minY = get_pmap_resp.pmap.info.origin.position.y
-    maxY = get_pmap_resp.pmap.info.origin.position.y + \
-        (get_pmap_resp.pmap.info.height * get_pmap_resp.pmap.info.resolution) + margin
-    # print minX, maxX, minY, maxY
-    rospy.wait_for_service("apply_rect_filter")
-    apply_rect_filter = rospy.ServiceProxy("apply_rect_filter", ApplyRectangleFilter)
-    if not apply_rect_filter(minX, minY, maxX, maxY):
-        sys.exit(1)
-    rospy.wait_for_service("get_topomap")
-    get_topomap = rospy.ServiceProxy("get_topomap", GetTopologicalMap)
-    get_topomap_resp = get_topomap("", "")
-    if not get_topomap_resp:
-        sys.exit(1)
-    poses = []
-    for place in get_topomap_resp.topomap.places:
-        for view in place.views:
-            pose = Pose()
-            pose.position.x = view.pose.x
-            pose.position.y = view.pose.y
-            pose.position.z = 1.314  # prosilica frame z-value
-            q = quaternion_from_euler(0, 0, view.pose.theta)
-            pose.orientation.x = q[0]
-            pose.orientation.y = q[1]
-            pose.orientation.z = q[2]
-            pose.orientation.w = q[3]
-            poses.append(pose)
+    # main
+    rospy.init_node("test_compute_vis_vals", anonymous=True)
 
-    resp = compute_vis_values_client(poses,
-                                     ComputeVisibilityValuesRequest.HEIGHT,
-                                     "",  # published pmap_filaname
-                                     "",  # published pmap_frame
-                                     "",  # published octomap_filaname
-                                     "",  # published octomap_frame
-                                     )
-    print resp
+    publish_pmap_octomap_topomap(pmap_filaname, octomap_filename, topomap_filename)
+
+    poses = get_poses_from_topomap(topomap_filename)
+
+    poses = apply_pmap_bbx_filter(poses, pmap_filaname, margin)
+
+    resp = call_compute_vis_values_srv(poses, ComputeVisibilityValuesRequest.SURFACE)
 
     max_val = max(resp.vis_values)
     max_index = [i for i, j in enumerate(resp.vis_values) if j == max_val][0]
+    max_pose = poses[max_index]
+    print resp
+    print "max vis_value =", max_val
 
-    print compute_vis_value_client(poses[max_index],
-                                   ComputeVisibilityValueRequest.HEIGHT,
-                                   "",  # published pmap_filaname
-                                   "",  # published pmap_frame
-                                   "",  # published octomap_filaname
-                                   ""   # published octomap_frame
-                                   )
+    call_compute_vis_value_srv(max_pose, mode)

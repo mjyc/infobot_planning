@@ -3,6 +3,9 @@
   <arg name="exclude_sim" default="false" />
   <arg name="exclude_rviz" default="false" />
 
+  <!-- Set Visibility reasoner parameter -->
+  <rosparam param="fov_grid_res">50</rosparam>
+
   <!-- Simulation -->
   <include file="$(find infobot_uw_morse)/launch/simple.launch" unless="$(arg exclude_sim)">
   </include>
@@ -12,10 +15,10 @@
 
   <!-- FindViewpoint -->
   <include file="$(find infobot_find_viewpoint)/launch/find_viewpoint.launch">
-    <arg name="map_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
-    <arg name="pmap_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
-    <arg name="octomap_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
-    <arg name="topomap_files_dirpath" value="$(find infobot_find_viewpoint)/test" />
+    <arg name="map_files_dirpath" value="$(find infobot_uw_world)/maps" />
+    <arg name="pmap_files_dirpath" value="$(find infobot_uw_world)/pmaps" />
+    <arg name="octomap_files_dirpath" value="$(find infobot_uw_world)/octomaps" />
+    <arg name="topomap_files_dirpath" value="$(find infobot_uw_world)/topomaps" />
   </include>
 
 </launch>
