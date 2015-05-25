@@ -2,7 +2,7 @@
 <launch>
 
   <!-- seed position: 5.52595 7.97241 -1.46656 -->
-  <!-- NOTE: make sure to temporarily change door colors in sim-simple_corridor.pgm to black. -->
+  <!-- NOTE: Temporarily change door colors (dark gray) in infobot_uw_world/maps/partial/sim-simple_corridor.pgm to black for algorithm to treat doors as walls (has an effect on thinning algorithm). -->
 
   <arg name="vis_level" default="0"/>
 
