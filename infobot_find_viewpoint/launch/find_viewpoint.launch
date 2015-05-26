@@ -35,5 +35,6 @@
   </node>
   <node name="pmap_to_octomap" pkg="infobot_find_viewpoint" type="pmap_to_octomap" output="screen"/>
   <node name="visibility_reasoner" pkg="infobot_find_viewpoint" type="visibility_reasoner" output="screen"/>
+  <node name="find_viewpoint" pkg="infobot_find_viewpoint" type="find_viewpoint_node" output="screen"/>
 
 </launch>

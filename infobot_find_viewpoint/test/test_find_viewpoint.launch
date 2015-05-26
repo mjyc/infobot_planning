@@ -3,7 +3,7 @@
   <arg name="map_name"/>
 
   <arg name="image_in" default="/prosilica_vga/image_rect_color"/>
-  <arg name="output_files_dirpath" default="$(env HOME)/octomaps"/>
+  <arg name="output_files_dirpath" default="$(env HOME)"/>
 
   <arg name="exclude_sim" default="false" />
   <arg name="exclude_nav" default="false" />
