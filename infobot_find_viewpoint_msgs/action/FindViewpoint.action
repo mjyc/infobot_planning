@@ -1,6 +1,8 @@
 uint8 SURFACE = 0
 uint8 HEIGHT = 1
 
+string img_filename
+
 uint8 pmap_to_octomap_mode
 
 string pmap_filename
@@ -10,7 +12,8 @@ string octomap_frame_id
 string topomap_filename
 string topomap_frame_id
 ---
-string img_filename
+bool img_saved
 ---
+sensor_msgs/Image image
 geometry_msgs/Pose[] poses
 float64[] vis_values

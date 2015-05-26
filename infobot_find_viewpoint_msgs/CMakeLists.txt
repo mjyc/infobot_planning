@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   actionlib_msgs
   geometry_msgs
+  sensor_msgs
   octomap_msgs
   infobot_map_msgs
 )
@@ -26,11 +27,11 @@ add_action_files(
     FindViewpoint.action
 )
 
-generate_messages(DEPENDENCIES std_msgs actionlib_msgs geometry_msgs octomap_msgs infobot_map_msgs)
+generate_messages(DEPENDENCIES std_msgs actionlib_msgs geometry_msgs sensor_msgs octomap_msgs infobot_map_msgs)
 
 catkin_package(
     # INCLUDE_DIRS include
     # LIBRARIES
-    CATKIN_DEPENDS message_runtime std_msgs actionlib_msgs geometry_msgs octomap_msgs infobot_map_msgs
+    CATKIN_DEPENDS message_runtime std_msgs actionlib_msgs geometry_msgs sensor_msgs octomap_msgs infobot_map_msgs
     # DEPENDS
 )
