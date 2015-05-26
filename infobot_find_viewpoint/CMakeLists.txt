@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   octomap_msgs
   infobot_map_msgs
   infobot_topo_msgs
+  infobot_find_viewpoint_msgs
   visualization_msgs
 )
 find_package(octomap REQUIRED)
@@ -18,7 +19,7 @@ generate_dynamic_reconfigure_options(cfg/InfoBotFindViewpoint.cfg)
 catkin_package(
     # INCLUDE_DIRS include
     # LIBRARIES
-    CATKIN_DEPENDS roscpp dynamic_reconfigure geometry_msgs octomap_msgs infobot_map_msgs infobot_topo_msgs visualization_msgs
+    CATKIN_DEPENDS roscpp dynamic_reconfigure geometry_msgs octomap_msgs infobot_map_msgs infobot_topo_msgs infobot_find_viewpoint_msgs visualization_msgs
     DEPENDS octomap
 )
 

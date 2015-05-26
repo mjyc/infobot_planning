@@ -18,6 +18,7 @@
   <build_depend>octomap_msgs</build_depend>
   <build_depend>infobot_map_msgs</build_depend>
   <build_depend>infobot_topo_msgs</build_depend>
+  <build_depend>infobot_find_viewpoint_msgs</build_depend>
   <build_depend>visualization_msgs</build_depend>>
 
   <run_depend>roscpp</run_depend>
@@ -32,6 +33,7 @@
   <run_depend>infobot_pmap_store</run_depend>
   <run_depend>infobot_octomap_store</run_depend>
   <run_depend>infobot_topomap_store</run_depend>
+  <run_depend>infobot_find_viewpoint_msgs</run_depend>
   <run_depend>infobot_image_saver</run_depend>
 
 </package>
