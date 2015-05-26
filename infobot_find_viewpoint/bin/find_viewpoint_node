@@ -56,19 +56,6 @@ def call_compute_vis_value_srv(pose, mode):
     return resp
 
 
-def call_compute_vis_value_srv_xyztheta(x, y, z, theta, mode):
-    pose = Pose()
-    pose.position.x = x
-    pose.position.y = y
-    pose.position.z = z
-    q = quaternion_from_euler(0, 0, theta)
-    pose.orientation.x = q[0]
-    pose.orientation.y = q[1]
-    pose.orientation.z = q[2]
-    pose.orientation.w = q[3]
-    return call_compute_vis_value_srv(pose, mode)
-
-
 def get_poses_from_topomap(topomap_fiilename, z):
     get_topomap_resp = call_srv("get_topomap", GetTopologicalMap, (topomap_fiilename, ""))
     if not get_topomap_resp:
@@ -135,100 +122,121 @@ class FindViewpointNode(object):
     def __init__(self, name):
         self._action_name = name
 
-        self._feedback = FindViewpointFeedback()
-        self._result = FindViewpointResult()
-
-        self._poses = []
-        self._cur_iter = 0
-        self._cur_vis_values = []
-        self._cur_visited_poses = []
-        self._cur_unreachable_poses = []
-
         self._as = actionlib.SimpleActionServer(
             self._action_name, FindViewpointAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
-    def _halt_action_server(self, halt_fnc, img_filename):
-        if self._cur_iter > 0:
-            if call_srv("save_image", SaveImage, (img_filename)):
-                self._result.img_saved = True
-            elif halt_fnc == self._as.set_succeeded:
-                halt_fnc = self._as.set_aborted
-        halt_fnc(self._result)
-
-        self._feedback = FindViewpointFeedback()
-        self._result = FindViewpointResult()
-
-        self._poses = []
-        self._cur_iter = 0
-        self._cur_vis_values = []
-        self._cur_visited_poses = []
-        self._cur_unreachable_poses = []
-
     def execute_cb(self, goal):
 
+        feedback = FindViewpointFeedback()
+        result = FindViewpointResult()
+
+        abort = False
+        preempt = False
+
+        cur_poses = []
+
+        # publish maps
         if not publish_pmap_octomap_topomap(goal.pmap_filename, goal.octomap_filename, goal.topomap_filename):
             rospy.logerr("%s: Error while publishing maps." % self._action_name)
-            self._halt_action_server(self._as.set_aborted, goal.img_filename)
-
+            abort = True
+        # process maps
         z = rospy.get_param("~camera_trans_z", FindViewpointNode.DEFAULT_CAMERA_TRANS_Z)
-        self._poses = get_poses_from_topomap(goal.topomap_filename, z)
+        cur_poses = get_poses_from_topomap(goal.topomap_filename, z)
         margin = rospy.get_param("~rect_filter_margin", FindViewpointNode.DEFAULT_RECT_FILTER_MARGIN)
-        self._poses = apply_pmap_bbx_filter(self._poses, goal.pmap_filename, margin)
-        if self._poses == []:
+        cur_poses = apply_pmap_bbx_filter(cur_poses, goal.pmap_filename, margin)
+        if cur_poses == []:
             rospy.logerr("%s: Error while extracting poses." % self._action_name)
-            self._halt_action_server(self._as.set_aborted, goal.img_filename)
+            abort = True
 
         prev_max_idx = -1
-        action_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-        action_client.wait_for_server()
+        prev_real_val = -1
+        cur_iter = 0
         max_iter = rospy.get_param("~num_iter", FindViewpointNode.DEFAULT_NUM_ITER)
-        while self._cur_iter < max_iter:
+        move_base_ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+        move_base_ac.wait_for_server()
+        while cur_iter < max_iter and not abort and not preempt:
+            rospy.loginfo("%s: iter=%d" % (self._action_name, cur_iter))
+
             if self._as.is_preempt_requested():
                 rospy.loginfo("%s: Preempted" % self._action_name)
-                self._halt_action_server(self._as.set_preempted, goal.img_filename)
-                return
+                preempt = True
+                break
 
-            rospy.loginfo("%s: Computing visibility values." % self._action_name)
+            rospy.loginfo("%s: Computing visibility values." % (self._action_name))
             mode = rospy.get_param("~mode", FindViewpointNode.DEFAULT_MODE)
-            resp = call_compute_vis_values_srv(self._poses, mode)
+            resp = call_compute_vis_values_srv(cur_poses, mode)
             if not resp:  # error while calling srv
-                self._halt_action_server(self._as.set_aborted, goal.img_filename)
-                return
+                abort = True
+                break
             if sum(resp.vis_values) == 0:  # cannot see requested location!
-                self._halt_action_server(self._as.set_aborted, goal.img_filename)
-                return
+                rospy.loginfo("%s: Returned vis values are all zero--cannot see the target!" % self._action_name)
+                abort = True
+                break
 
             max_val = max(resp.vis_values)
             max_index = [i for i, j in enumerate(resp.vis_values) if j == max_val][0]
-            max_pose = self._poses[max_index]
+            max_pose = cur_poses[max_index]
             rospy.loginfo("%s: current max vis_value = %f" % (self._action_name, max_val))
+            call_compute_vis_value_srv(max_pose, mode)  # for debugging
 
             if prev_max_idx == max_index:
                 rospy.loginfo("%s: Success!" % self._action_name)
-                self._halt_action_server(self._as.set_succeeded, goal.img_filename)
-                return
+                break
             else:
                 prev_max_idx = max_index
                 # publish feedback
-                self._feedback.poses = self._poses
-                self._feedback.vis_values = resp.vis_values
-                get_image_resp = call_srv("get_image", GetImage, ())
-                if get_image_resp:
-                    self._feedback.image = get_image_resp.image
-                self._as.publish_feedback(self._feedback)
+                feedback.poses = cur_poses
+                feedback.vis_values = resp.vis_values
+                self._as.publish_feedback(feedback)
 
-            mb_goal = MoveBaseGoal()
-            mb_goal.target_pose.header.stamp = rospy.get_rostime()
-            mb_goal.target_pose.header.frame_id = "map"
-            mb_goal.target_pose.pose.position.x = max_pose.position.x
-            mb_goal.target_pose.pose.position.y = max_pose.position.y
-            mb_goal.target_pose.pose.position.z = 0.0
-            mb_goal.target_pose.pose.orientation = max_pose.orientation
-            action_client.send_goal(mb_goal)
-            action_client.wait_for_result()
+            move_base_goal = MoveBaseGoal()
+            move_base_goal.target_pose.header.stamp = rospy.get_rostime()
+            move_base_goal.target_pose.header.frame_id = "map"
+            move_base_goal.target_pose.pose.position.x = max_pose.position.x
+            move_base_goal.target_pose.pose.position.y = max_pose.position.y
+            move_base_goal.target_pose.pose.position.z = 0.0
+            move_base_goal.target_pose.pose.orientation = max_pose.orientation
+            move_base_ac.send_goal(move_base_goal)
+            move_base_ac.wait_for_result()
 
-            self._cur_iter += 1
+            # Once reached destination, see if we need to save current image.
+            real_resp = call_compute_vis_value_srv(max_pose, mode)
+            if not real_resp:
+                abort = True
+                break
+            cur_vis_val = real_resp.vis_value
+            rospy.loginfo("%s: current real vis_value = %f" % (self._action_name, cur_vis_val))
+            print cur_vis_val, prev_real_val
+            if cur_vis_val > prev_real_val:
+                prev_real_val = cur_vis_val
+                rospy.loginfo("%s: New best viewpoint found. Saving an image." % self._action_name)
+                outimg_filename = goal.img_filename
+                if outimg_filename == "":
+                    outimg_filename = "find_viewpoint_result_" + goal.pmap_filename + ".jpg"
+                    print outimg_filename
+                save_image_resp = call_srv("save_image", SaveImage, [outimg_filename])
+                if not save_image_resp:
+                    rospy.loginfo("if not save_image_resp")
+                    abort = True
+                    break
+                else:
+                    result.img_saved = True
+            else:
+                result.img_saved = False
+                rospy.loginfo("%s: New viewpoint is worse than previous one!" % self._action_name)
+
+            cur_iter += 1
+
+        if cur_iter == max_iter and not abort:
+            abort = True
+
+        if preempt:
+            self._as.set_preempted(result)
+        elif abort:
+            self._as.set_aborted(result)
+        else:
+            self._as.set_succeeded(result)
 
 if __name__ == "__main__":
     rospy.init_node("find_viewpoint")
