@@ -93,7 +93,7 @@ void VisibilityReasonerNode::reconfigureCallback(const infobot_find_viewpoint::I
   ROS_INFO("-> horizontal_angle_of_view: %f", new_config.horizontal_angle_of_view);
   ROS_INFO("-> vertical_angle_of_view: %f", new_config.vertical_angle_of_view);
   ROS_INFO("-> depth_max: %f", new_config.depth_max);
-  ROS_INFO("-> fov_grid_resolution: %f", new_config.fov_grid_res);
+  ROS_INFO("-> fov_grid_resolution: %d", new_config.fov_grid_res);
   ROS_INFO("-> height_mean: %f", new_config.height_mean);
   ROS_INFO("-> height_var: %f", new_config.height_var);
 

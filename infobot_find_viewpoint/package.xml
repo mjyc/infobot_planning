@@ -32,5 +32,6 @@
   <run_depend>infobot_pmap_store</run_depend>
   <run_depend>infobot_octomap_store</run_depend>
   <run_depend>infobot_topomap_store</run_depend>
+  <run_depend>infobot_image_saver</run_depend>
 
 </package>

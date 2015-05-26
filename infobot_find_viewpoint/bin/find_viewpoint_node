@@ -1,0 +1,236 @@
+#!/usr/bin/env python
+
+import rospy
+
+import actionlib
+from geometry_msgs.msg import Pose
+from move_base_msgs.msg import *
+from tf.transformations import quaternion_from_euler
+from infobot_find_viewpoint_msgs.msg import *
+from infobot_find_viewpoint_msgs.srv import *
+from infobot_map_msgs.srv import *
+from infobot_topo_msgs.srv import *
+from infobot_image_saver.srv import *
+
+
+def call_srv(srv_name, srv_type, srv_args):
+    rospy.wait_for_service(srv_name)
+    try:
+        srv_proxy = rospy.ServiceProxy(srv_name, srv_type)
+        return srv_proxy(*srv_args)
+    except rospy.ServiceException, e:
+        rospy.logerr("Service call failed: %s" % e)
+        return None
+
+
+def publish_pmap_octomap(pmap_filename, octomap_fiilename):
+    rospy.logwarn("IGNORES INPUT pmap_frame_id. Uses \"map\" instead.")
+    publish_pmap_resp = call_srv("publish_pmap", PublishProbabilityMap, (pmap_filename, ""))
+    if not publish_pmap_resp or not publish_pmap_resp.success:
+        return False
+    rospy.logwarn("IGNORES INPUT octomap_frame_id. Uses \"map\" instead.")
+    publish_octomap_resp = call_srv("publish_octomap", PublishOctomap, (octomap_fiilename, ""))
+    if not publish_octomap_resp or not publish_octomap_resp.success:
+        return False
+    return True
+
+
+def publish_pmap_octomap_topomap(pmap_filename, octomap_fiilename, topomap_filename):
+    rospy.logwarn("IGNORES INPUT topomap_frame_id. Uses \"map\" instead.")
+    publish_pmap_octomap(pmap_filename, octomap_fiilename)
+    publish_topomap_resp = call_srv("publish_topomap", PublishTopologicalMap, (topomap_filename, ""))
+    if not publish_topomap_resp or not publish_topomap_resp.success:
+        return False
+    return True
+
+
+def call_compute_vis_value_srv(pose, mode):
+    resp = call_srv("compute_vis_value", ComputeVisibilityValue, (
+        pose,
+        mode,
+        "",  # use published pmap_filename
+        "",  # use published pmap_frame
+        "",  # use published octomap_filename
+        ""   # use published octomap_frame
+    ))
+    return resp
+
+
+def call_compute_vis_value_srv_xyztheta(x, y, z, theta, mode):
+    pose = Pose()
+    pose.position.x = x
+    pose.position.y = y
+    pose.position.z = z
+    q = quaternion_from_euler(0, 0, theta)
+    pose.orientation.x = q[0]
+    pose.orientation.y = q[1]
+    pose.orientation.z = q[2]
+    pose.orientation.w = q[3]
+    return call_compute_vis_value_srv(pose, mode)
+
+
+def get_poses_from_topomap(topomap_fiilename, z):
+    get_topomap_resp = call_srv("get_topomap", GetTopologicalMap, (topomap_fiilename, ""))
+    if not get_topomap_resp:
+        return []
+
+    poses = []
+    for place in get_topomap_resp.topomap.places:
+        for view in place.views:
+            pose = Pose()
+            pose.position.x = view.pose.x
+            pose.position.y = view.pose.y
+            pose.position.z = z
+            q = quaternion_from_euler(0, 0, view.pose.theta)
+            pose.orientation.x = q[0]
+            pose.orientation.y = q[1]
+            pose.orientation.z = q[2]
+            pose.orientation.w = q[3]
+            poses.append(pose)
+
+    return poses
+
+
+def apply_pmap_bbx_filter(poses, pmap_filename, margin):
+    '''
+        margin: in meters
+    '''
+    get_pmap_resp = call_srv("get_pmap", GetProbabilityMap, (pmap_filename, ""))
+    if not get_pmap_resp:
+        return None
+
+    minX = get_pmap_resp.pmap.info.origin.position.x - margin
+    maxX = get_pmap_resp.pmap.info.origin.position.x + \
+        (get_pmap_resp.pmap.info.width * get_pmap_resp.pmap.info.resolution) + margin
+    minY = get_pmap_resp.pmap.info.origin.position.y - margin
+    maxY = get_pmap_resp.pmap.info.origin.position.y + \
+        (get_pmap_resp.pmap.info.height * get_pmap_resp.pmap.info.resolution) + margin
+
+    new_poses = []
+    for pose in poses:
+        if pose.position.x > minX and pose.position.x < maxX and pose.position.y > minY and pose.position.y < maxY:
+            new_poses.append(pose)
+
+    return new_poses
+
+
+def call_compute_vis_values_srv(poses, mode):
+    resp = call_srv("compute_vis_values", ComputeVisibilityValues, (
+        poses,
+        mode,
+        "",  # use published pmap_filename
+        "",  # use published pmap_frame
+        "",  # use published octomap_filename
+        ""   # use published octomap_frame
+    ))
+    return resp
+
+
+class FindViewpointNode(object):
+    DEFAULT_CAMERA_TRANS_Z = 1.314
+    DEFAULT_RECT_FILTER_MARGIN = 5.0  # in meters
+    DEFAULT_NUM_ITER = 5
+    DEFAULT_MODE = ComputeVisibilityValuesRequest.SURFACE
+
+    def __init__(self, name):
+        self._action_name = name
+
+        self._feedback = FindViewpointFeedback()
+        self._result = FindViewpointResult()
+
+        self._poses = []
+        self._cur_iter = 0
+        self._cur_vis_values = []
+        self._cur_visited_poses = []
+        self._cur_unreachable_poses = []
+
+        self._as = actionlib.SimpleActionServer(
+            self._action_name, FindViewpointAction, execute_cb=self.execute_cb, auto_start=False)
+        self._as.start()
+
+    def _halt_action_server(self, halt_fnc, img_filename):
+        if self._cur_iter > 0:
+            if call_srv("save_image", SaveImage, (img_filename)):
+                self._result.img_saved = True
+            elif halt_fnc == self._as.set_succeeded:
+                halt_fnc = self._as.set_aborted
+        halt_fnc(self._result)
+
+        self._feedback = FindViewpointFeedback()
+        self._result = FindViewpointResult()
+
+        self._poses = []
+        self._cur_iter = 0
+        self._cur_vis_values = []
+        self._cur_visited_poses = []
+        self._cur_unreachable_poses = []
+
+    def execute_cb(self, goal):
+
+        if not publish_pmap_octomap_topomap(goal.pmap_filename, goal.octomap_filename, goal.topomap_filename):
+            rospy.logerr("%s: Error while publishing maps." % self._action_name)
+            self._halt_action_server(self._as.set_aborted, goal.img_filename)
+
+        z = rospy.get_param("~camera_trans_z", FindViewpointNode.DEFAULT_CAMERA_TRANS_Z)
+        self._poses = get_poses_from_topomap(goal.topomap_filename, z)
+        margin = rospy.get_param("~rect_filter_margin", FindViewpointNode.DEFAULT_RECT_FILTER_MARGIN)
+        self._poses = apply_pmap_bbx_filter(self._poses, goal.pmap_filename, margin)
+        if self._poses == []:
+            rospy.logerr("%s: Error while extracting poses." % self._action_name)
+            self._halt_action_server(self._as.set_aborted, goal.img_filename)
+
+        prev_max_idx = -1
+        action_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+        action_client.wait_for_server()
+        max_iter = rospy.get_param("~num_iter", FindViewpointNode.DEFAULT_NUM_ITER)
+        while self._cur_iter < max_iter:
+            if self._as.is_preempt_requested():
+                rospy.loginfo("%s: Preempted" % self._action_name)
+                self._halt_action_server(self._as.set_preempted, goal.img_filename)
+                return
+
+            rospy.loginfo("%s: Computing visibility values." % self._action_name)
+            mode = rospy.get_param("~mode", FindViewpointNode.DEFAULT_MODE)
+            resp = call_compute_vis_values_srv(self._poses, mode)
+            if not resp:  # error while calling srv
+                self._halt_action_server(self._as.set_aborted, goal.img_filename)
+                return
+            if sum(resp.vis_values) == 0:  # cannot see requested location!
+                self._halt_action_server(self._as.set_aborted, goal.img_filename)
+                return
+
+            max_val = max(resp.vis_values)
+            max_index = [i for i, j in enumerate(resp.vis_values) if j == max_val][0]
+            max_pose = self._poses[max_index]
+            rospy.loginfo("%s: current max vis_value = %f" % (self._action_name, max_val))
+
+            if prev_max_idx == max_index:
+                rospy.loginfo("%s: Success!" % self._action_name)
+                self._halt_action_server(self._as.set_succeeded, goal.img_filename)
+                return
+            else:
+                prev_max_idx = max_index
+                # publish feedback
+                self._feedback.poses = self._poses
+                self._feedback.vis_values = resp.vis_values
+                get_image_resp = call_srv("get_image", GetImage, ())
+                if get_image_resp:
+                    self._feedback.image = get_image_resp.image
+                self._as.publish_feedback(self._feedback)
+
+            mb_goal = MoveBaseGoal()
+            mb_goal.target_pose.header.stamp = rospy.get_rostime()
+            mb_goal.target_pose.header.frame_id = "map"
+            mb_goal.target_pose.pose.position.x = max_pose.position.x
+            mb_goal.target_pose.pose.position.y = max_pose.position.y
+            mb_goal.target_pose.pose.position.z = 0.0
+            mb_goal.target_pose.pose.orientation = max_pose.orientation
+            action_client.send_goal(mb_goal)
+            action_client.wait_for_result()
+
+            self._cur_iter += 1
+
+if __name__ == "__main__":
+    rospy.init_node("find_viewpoint")
+    FindViewpointNode(rospy.get_name())
+    rospy.spin()

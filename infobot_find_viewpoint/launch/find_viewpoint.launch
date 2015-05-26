@@ -1,13 +1,18 @@
 <launch>
 
+  <!-- Map store parameters -->
   <arg name="map_files_dirpath"/>
   <arg name="pmap_files_dirpath"/>
   <arg name="octomap_files_dirpath"/>
+  <arg name="cloud_in" default="cloud_in"/>
   <arg name="topomap_files_dirpath"/>
 
-  <arg name="cloud_in" default="cloud_in"/>
+  <!-- FindViewpoint parameters -->
+  <arg name="image_in" default="image_in"/>
+  <arg name="output_files_dirpath" default="$(env HOME)"/>
 
-  <!-- Map managers -->
+
+  <!-- Map stores -->
   <node name="map_files_server" pkg="infobot_map_store" type="map_files_server_node" output="screen">
     <param name="map_files_dirpath" value="$(arg map_files_dirpath)" />
   </node>
@@ -22,9 +27,13 @@
     <param name="topomap_files_dirpath" value="$(arg topomap_files_dirpath)" />
   </node>
 
-  <!-- Nodes required for FindViewpoint -->
-  <node name="pmap_to_octomap" pkg="infobot_find_viewpoint" type="pmap_to_octomap" output="screen"/>
+  <!-- FindViewpoint -->
+  <node name="image_saver" pkg="infobot_image_saver" type="image_saver_node" output="screen">
+    <param name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
 
+    <remap from="image" to="$(arg image_in)"/>
+  </node>
+  <node name="pmap_to_octomap" pkg="infobot_find_viewpoint" type="pmap_to_octomap" output="screen"/>
   <node name="visibility_reasoner" pkg="infobot_find_viewpoint" type="visibility_reasoner" output="screen"/>
 
 </launch>

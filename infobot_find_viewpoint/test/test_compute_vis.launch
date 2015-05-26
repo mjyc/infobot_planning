@@ -1,13 +1,16 @@
 <launch>
 
+  <arg name="map_name"/>
+
   <arg name="exclude_sim" default="false" />
   <arg name="exclude_rviz" default="false" />
 
-  <!-- Set Visibility reasoner parameter -->
-  <rosparam param="fov_grid_res">50</rosparam>
+  <rosparam param="/visibility_reasoner/fov_grid_res">50</rosparam>
+
 
   <!-- Simulation -->
   <include file="$(find infobot_uw_morse)/launch/simple.launch" unless="$(arg exclude_sim)">
+    <arg name="use_joystick" value="false" />
   </include>
 
   <!-- Rviz -->

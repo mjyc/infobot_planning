@@ -10,7 +10,7 @@ from infobot_find_viewpoint_msgs.srv import *
 from infobot_map_msgs.srv import *
 from infobot_topo_msgs.srv import *
 
-PROSILICA_TRANS_Z = 1.314
+CAMERA_TRANS_Z = 1.314
 
 
 def call_srv(srv_name, srv_type, srv_args):
@@ -43,9 +43,9 @@ def call_compute_vis_value_srv(pose, mode):
     resp = call_srv("compute_vis_value", ComputeVisibilityValue, (
         pose,
         mode,
-        "",  # use published pmap_filaname
+        "",  # use published pmap_filename
         "",  # use published pmap_frame
-        "",  # use published octomap_filaname
+        "",  # use published octomap_filename
         ""   # use published octomap_frame
         ))
     return resp
@@ -55,7 +55,7 @@ def call_compute_vis_value_srv_xytheta(x, y, theta, mode):
     pose = Pose()
     pose.position.x = x
     pose.position.y = y
-    pose.position.z = PROSILICA_TRANS_Z
+    pose.position.z = CAMERA_TRANS_Z
     q = quaternion_from_euler(0, 0, theta)
     pose.orientation.x = q[0]
     pose.orientation.y = q[1]
@@ -75,7 +75,7 @@ def get_poses_from_topomap(topomap_fiilename):
             pose = Pose()
             pose.position.x = view.pose.x
             pose.position.y = view.pose.y
-            pose.position.z = PROSILICA_TRANS_Z
+            pose.position.z = CAMERA_TRANS_Z
             q = quaternion_from_euler(0, 0, view.pose.theta)
             pose.orientation.x = q[0]
             pose.orientation.y = q[1]
@@ -113,9 +113,9 @@ def call_compute_vis_values_srv(poses, mode):
     resp = call_srv("compute_vis_values", ComputeVisibilityValues, (
         poses,
         mode,
-        "",  # use published pmap_filaname
+        "",  # use published pmap_filename
         "",  # use published pmap_frame
-        "",  # use published octomap_filaname
+        "",  # use published octomap_filename
         ""   # use published octomap_frame
         ))
     return resp

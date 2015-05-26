@@ -7,22 +7,22 @@ from test_utils import *
 if __name__ == "__main__":
 
     # inputs
-    pmap_filaname = "sim-simple-room1.yaml"
+    pmap_filename = "sim-simple-room1.yaml"
     octomap_filename = "sim-simple-model.bt"
-    topomap_filename = "sim-simple-topo.yaml"
+    topomap_filename = "sim-simple_corridor-topo.yaml"
 
-    margin = 5.0
+    margin = 2.0
 
     mode = ComputeVisibilityValuesRequest.SURFACE
 
     # main
     rospy.init_node("test_compute_vis_vals", anonymous=True)
 
-    publish_pmap_octomap_topomap(pmap_filaname, octomap_filename, topomap_filename)
+    publish_pmap_octomap_topomap(pmap_filename, octomap_filename, topomap_filename)
 
     poses = get_poses_from_topomap(topomap_filename)
 
-    poses = apply_pmap_bbx_filter(poses, pmap_filaname, margin)
+    poses = apply_pmap_bbx_filter(poses, pmap_filename, margin)
 
     resp = call_compute_vis_values_srv(poses, ComputeVisibilityValuesRequest.SURFACE)
 
