@@ -309,7 +309,7 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
       return false;
     }
 
-    ROS_INFO("vis_value=%f", visValue);
+    ROS_DEBUG("vis_value=%f", visValue);
 
     res.vis_values.push_back(visValue);
   }
