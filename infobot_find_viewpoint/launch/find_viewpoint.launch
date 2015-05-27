@@ -7,8 +7,15 @@
   <arg name="topomap_files_dirpath"/>
 
   <!-- FindViewpoint parameters -->
-  <arg name="image_in" default="image_in"/>
+  <arg name="image_topic" default="image_topic"/>
   <arg name="output_files_dirpath" default="$(env HOME)"/>
+
+  <!-- 50: fast / inaccurate, 1000: slow / accurate -->
+  <arg name="fov_grid_res" default="50"/>
+
+  <arg name="rect_filter_margin" default="10.0"/>
+  <arg name="camera_trans_z" default="1.5"/>
+  <arg name="num_iter" default="10"/>
 
 
   <!-- Map stores -->
@@ -23,14 +30,20 @@
     <param name="topomap_files_dirpath" value="$(arg topomap_files_dirpath)" />
   </node>
 
-  <!-- FindViewpoint -->
+  <!-- FindViewpoint Related -->
   <node name="image_saver" pkg="infobot_image_saver" type="image_saver_node" output="screen">
     <param name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
 
-    <remap from="image" to="$(arg image_in)"/>
+    <remap from="image" to="$(arg image_topic)"/>
   </node>
   <node name="pmap_to_octomap" pkg="infobot_find_viewpoint" type="pmap_to_octomap" output="screen"/>
-  <node name="visibility_reasoner" pkg="infobot_find_viewpoint" type="visibility_reasoner" output="screen"/>
-  <node name="find_viewpoint" pkg="infobot_find_viewpoint" type="find_viewpoint_node" output="screen"/>
+  <node name="visibility_reasoner" pkg="infobot_find_viewpoint" type="visibility_reasoner" output="screen">
+    <param name="fov_grid_res" value="$(arg fov_grid_res)"/>
+  </node>
+  <node name="find_viewpoint" pkg="infobot_find_viewpoint" type="find_viewpoint_node" output="screen">
+    <param name="rect_filter_margin" value="$(arg rect_filter_margin)"/>
+    <param name="camera_trans_z" value="$(arg camera_trans_z)"/>
+    <param name="num_iter" value="$(arg num_iter)"/>
+  </node>
 
 </launch>

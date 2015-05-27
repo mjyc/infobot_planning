@@ -10,23 +10,26 @@ from infobot_find_viewpoint_msgs.srv import *
 
 
 if __name__ == "__main__":
-    rospy.init_node("find_viewpoint_send_goal", anonymous=True)
+    rospy.init_node("find_viewpoint_send_goal")
 
     # Get params
-    if len(sys.argv) < 5:
-        print >> sys.stderr, "send_goal <mode> <pmap_filename> <octomap_filename> <topomap_filename>"
+    if len(sys.argv) < 6:
+        print >> sys.stderr, ("send_goal <img_filename> <pmap_to_octomap_mode> <pmap_filename> <octomap_filename> "
+                              "<topomap_filename>")
         sys.exit(1)
 
-    mode = int(sys.argv[1])
-    pmap_filename = sys.argv[2]
-    octomap_filename = sys.argv[3]
-    topomap_filename = sys.argv[4]
+    img_filename = sys.argv[1]
+    pmap_to_octomap_mode = int(sys.argv[2])
+    pmap_filename = sys.argv[3]
+    octomap_filename = sys.argv[4]
+    topomap_filename = sys.argv[5]
 
     # Send goal
     action_client = actionlib.SimpleActionClient("find_viewpoint", FindViewpointAction)
     action_client.wait_for_server()
     goal = FindViewpointGoal()
-    goal.pmap_to_octomap_mode = mode
+    goal.img_filename = img_filename
+    goal.pmap_to_octomap_mode = pmap_to_octomap_mode
     goal.pmap_filename = pmap_filename
     goal.pmap_frame_id = ""
     goal.octomap_filename = octomap_filename
@@ -37,5 +40,4 @@ if __name__ == "__main__":
     action_client.send_goal(goal)
     action_client.wait_for_result()
 
-    print "state:", action_client.get_state()
-    print "result:", action_client.get_result()
+    print "Finished. Goal State:", action_client.get_state()

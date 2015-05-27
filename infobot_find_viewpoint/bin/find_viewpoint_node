@@ -114,13 +114,16 @@ def call_compute_vis_values_srv(poses, mode):
 
 
 class FindViewpointNode(object):
-    DEFAULT_CAMERA_TRANS_Z = 1.314
-    DEFAULT_RECT_FILTER_MARGIN = 5.0  # in meters
-    DEFAULT_NUM_ITER = 5
-    DEFAULT_MODE = ComputeVisibilityValuesRequest.SURFACE
+    DEFAULT_RECT_FILTER_MARGIN = 10.0  # in meters
+    DEFAULT_CAMERA_TRANS_Z = 1.5
+    DEFAULT_NUM_ITER = 10
 
     def __init__(self, name):
         self._action_name = name
+
+        self._camera_trans_z = rospy.get_param("~camera_trans_z", FindViewpointNode.DEFAULT_CAMERA_TRANS_Z)
+        self._rect_filter_margin = rospy.get_param("~rect_filter_margin", FindViewpointNode.DEFAULT_RECT_FILTER_MARGIN)
+        self._max_iter = rospy.get_param("~max_iter", FindViewpointNode.DEFAULT_NUM_ITER)
 
         self._as = actionlib.SimpleActionServer(
             self._action_name, FindViewpointAction, execute_cb=self.execute_cb, auto_start=False)
@@ -130,6 +133,7 @@ class FindViewpointNode(object):
 
         feedback = FindViewpointFeedback()
         result = FindViewpointResult()
+        result.img_saved = False
 
         abort = False
         preempt = False
@@ -141,53 +145,78 @@ class FindViewpointNode(object):
             rospy.logerr("%s: Error while publishing maps." % self._action_name)
             abort = True
         # process maps
-        z = rospy.get_param("~camera_trans_z", FindViewpointNode.DEFAULT_CAMERA_TRANS_Z)
-        cur_poses = get_poses_from_topomap(goal.topomap_filename, z)
-        margin = rospy.get_param("~rect_filter_margin", FindViewpointNode.DEFAULT_RECT_FILTER_MARGIN)
-        cur_poses = apply_pmap_bbx_filter(cur_poses, goal.pmap_filename, margin)
+        cur_poses = get_poses_from_topomap(goal.topomap_filename, self._camera_trans_z)
+        cur_poses = apply_pmap_bbx_filter(cur_poses, goal.pmap_filename, self._rect_filter_margin)
         if cur_poses == []:
             rospy.logerr("%s: Error while extracting poses." % self._action_name)
             abort = True
 
-        prev_max_idx = -1
-        prev_real_val = -1
-        cur_iter = 0
         max_iter = rospy.get_param("~num_iter", FindViewpointNode.DEFAULT_NUM_ITER)
+        cur_iter = 0
+        prev_max_pose = None
+        prev_real_vis_val = -1
         move_base_ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
         move_base_ac.wait_for_server()
-        while cur_iter < max_iter and not abort and not preempt:
-            rospy.loginfo("%s: iter=%d" % (self._action_name, cur_iter))
+        while cur_iter < self._max_iter and not abort and not preempt:
+            rospy.loginfo("%s: Iter=%d" % (self._action_name, cur_iter))
 
             if self._as.is_preempt_requested():
                 rospy.loginfo("%s: Preempted" % self._action_name)
                 preempt = True
                 break
 
-            rospy.loginfo("%s: Computing visibility values." % (self._action_name))
-            mode = rospy.get_param("~mode", FindViewpointNode.DEFAULT_MODE)
-            resp = call_compute_vis_values_srv(cur_poses, mode)
-            if not resp:  # error while calling srv
+            # check current vis_value
+            compute_vis_val_resp = None
+            if prev_max_pose is not None:
+                compute_vis_val_resp = call_compute_vis_value_srv(prev_max_pose, goal.pmap_to_octomap_mode)
+                if not compute_vis_val_resp:
+                    rospy.logerr("%s: Error while calling compute_vis_val srv." % self._action_name)
+                    abort = True
+                    break
+                cur_real_vis_val = compute_vis_val_resp.vis_value
+                rospy.loginfo("%s: Current real vis_value = %f" % (self._action_name, cur_real_vis_val))
+                if cur_real_vis_val > prev_real_vis_val:
+                    prev_real_vis_val = cur_real_vis_val
+                    rospy.loginfo("%s: New best viewpoint found." % self._action_name)
+                    outimg_filename = goal.img_filename
+                    if outimg_filename == "":
+                        outimg_filename = "result.jpg"
+                    save_image_resp = call_srv("save_image", SaveImage, [outimg_filename])
+                    if not save_image_resp:
+                        rospy.loginfo("if not save_image_resp")
+                        abort = True
+                        break
+                    else:
+                        result.img_saved = True
+                else:
+                    rospy.loginfo("%s: New viewpoint is worse than previous one!" % self._action_name)
+                    result.img_saved = False
+
+            rospy.loginfo("%s: Computing visibility values." % self._action_name)
+            compute_vis_vals_resp = call_compute_vis_values_srv(cur_poses, goal.pmap_to_octomap_mode)
+            if not compute_vis_vals_resp:
+                rospy.logerr("%s: Error while calling compute_vis_vals srv." % self._action_name)
                 abort = True
                 break
-            if sum(resp.vis_values) == 0:  # cannot see requested location!
-                rospy.loginfo("%s: Returned vis values are all zero--cannot see the target!" % self._action_name)
+            if sum(compute_vis_vals_resp.vis_values) == 0:
+                rospy.loginfo("%s: Result vis values are all zero." % self._action_name)
                 abort = True
                 break
 
-            max_val = max(resp.vis_values)
-            max_index = [i for i, j in enumerate(resp.vis_values) if j == max_val][0]
+            max_val = max(compute_vis_vals_resp.vis_values)
+            max_index = [i for i, j in enumerate(compute_vis_vals_resp.vis_values) if j == max_val][0]
             max_pose = cur_poses[max_index]
-            rospy.loginfo("%s: current max vis_value = %f" % (self._action_name, max_val))
-            call_compute_vis_value_srv(max_pose, mode)  # for debugging
+            rospy.loginfo("%s: Current max vis_value = %f" % (self._action_name, max_val))
+            call_compute_vis_value_srv(max_pose, goal.pmap_to_octomap_mode)  # for debugging
 
-            if prev_max_idx == max_index:
+            if prev_max_pose == max_pose:
                 rospy.loginfo("%s: Success!" % self._action_name)
                 break
             else:
-                prev_max_idx = max_index
+                prev_max_pose = max_pose
                 # publish feedback
                 feedback.poses = cur_poses
-                feedback.vis_values = resp.vis_values
+                feedback.vis_values = compute_vis_vals_resp.vis_values
                 self._as.publish_feedback(feedback)
 
             move_base_goal = MoveBaseGoal()
@@ -200,34 +229,9 @@ class FindViewpointNode(object):
             move_base_ac.send_goal(move_base_goal)
             move_base_ac.wait_for_result()
 
-            # Once reached destination, see if we need to save current image.
-            real_resp = call_compute_vis_value_srv(max_pose, mode)
-            if not real_resp:
-                abort = True
-                break
-            cur_vis_val = real_resp.vis_value
-            rospy.loginfo("%s: current real vis_value = %f" % (self._action_name, cur_vis_val))
-            print cur_vis_val, prev_real_val
-            if cur_vis_val > prev_real_val:
-                prev_real_val = cur_vis_val
-                rospy.loginfo("%s: New best viewpoint found. Saving an image." % self._action_name)
-                outimg_filename = goal.img_filename
-                if outimg_filename == "":
-                    outimg_filename = "find_viewpoint_result_" + goal.pmap_filename + ".jpg"
-                    print outimg_filename
-                save_image_resp = call_srv("save_image", SaveImage, [outimg_filename])
-                if not save_image_resp:
-                    rospy.loginfo("if not save_image_resp")
-                    abort = True
-                    break
-                else:
-                    result.img_saved = True
-            else:
-                result.img_saved = False
-                rospy.loginfo("%s: New viewpoint is worse than previous one!" % self._action_name)
-
             cur_iter += 1
 
+        # loop reached max_iter
         if cur_iter == max_iter and not abort:
             abort = True
 

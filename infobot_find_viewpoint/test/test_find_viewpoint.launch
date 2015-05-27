@@ -1,15 +1,10 @@
 <launch>
 
-  <arg name="map_name"/>
-
-  <arg name="image_in" default="/prosilica_vga/image_rect_color"/>
-  <arg name="output_files_dirpath" default="$(env HOME)"/>
-
   <arg name="exclude_sim" default="false" />
   <arg name="exclude_nav" default="false" />
   <arg name="exclude_rviz" default="false" />
 
-  <rosparam param="/visibility_reasoner/fov_grid_res">100</rosparam>
+  <arg name="output_files_dirpath" default="$(env HOME)/images/"/>
 
 
   <!-- Simulation -->
@@ -19,7 +14,7 @@
 
   <!-- Navigation -->
   <include file="$(find infobot_uw_systems)/launch/navigation.launch" unless="$(arg exclude_nav)">
-    <arg name="map_name" value="$(arg map_name)" />
+    <arg name="map_name" value="sim-simple" />
   </include>
 
   <!-- Rviz -->
@@ -29,10 +24,27 @@
   <include file="$(find infobot_find_viewpoint)/launch/find_viewpoint.launch">
     <arg name="pmap_files_dirpath" value="$(find infobot_uw_world)/pmaps" />
     <arg name="octomap_files_dirpath" value="$(find infobot_uw_world)/octomaps" />
+    <arg name="cloud_in" value="/xtion/depth_registered/points" />
     <arg name="topomap_files_dirpath" value="$(find infobot_uw_world)/topomaps" />
 
-    <arg name="image_in" value="$(arg image_in)"/>
+    <arg name="image_topic" value="/prosilica_vga/image_rect_color"/>
     <arg name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
+
+    <arg name="rect_filter_margin" default="1.5"/>
+    <arg name="camera_trans_z" default="1.314"/>
+    <arg name="num_iter" default="5"/>
   </include>
+
+  <!-- FindViewpoint Goals -->
+  <node pkg="infobot_find_viewpoint" type="send_multiple_goals" name="send_multiple_goals" output="screen">
+    <param name="mode" value="0"/>
+    <param name="octomap_filename" value="sim-simple-model.bt"/>
+    <param name="topomap_filename" value="sim-simple_corridor-topo.yaml"/>
+    <rosparam param="pmap_filenames">[
+    "sim-simple-room1.yaml",
+    "sim-simple-room2.yaml",
+    "sim-simple-room3.yaml"
+    ]</rosparam>
+  </node>
 
 </launch>
