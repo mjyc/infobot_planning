@@ -12,6 +12,7 @@
 
   <!-- 50: fast / inaccurate, 1000: slow / accurate -->
   <arg name="fov_grid_res" default="50"/>
+  <arg name="dist_factor" default="0"/>
 
   <arg name="rect_filter_margin" default="10.0"/>
   <arg name="camera_trans_z" default="1.5"/>
@@ -39,6 +40,7 @@
   <node name="pmap_to_octomap" pkg="infobot_find_viewpoint" type="pmap_to_octomap" output="screen"/>
   <node name="visibility_reasoner" pkg="infobot_find_viewpoint" type="visibility_reasoner" output="screen">
     <param name="fov_grid_res" value="$(arg fov_grid_res)"/>
+    <param name="dist_factor" value="$(arg dist_factor)"/>
   </node>
   <node name="find_viewpoint" pkg="infobot_find_viewpoint" type="find_viewpoint_node" output="screen">
     <param name="rect_filter_margin" value="$(arg rect_filter_margin)"/>

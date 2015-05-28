@@ -31,6 +31,7 @@
     <arg name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
 
     <arg name="fov_grid_res" value="50"/>
+    <arg name="dist_factor" value="1"/>
 
     <arg name="rect_filter_margin" default="1.5"/>
     <arg name="camera_trans_z" default="1.314"/>
