@@ -7,7 +7,7 @@ from dynamic_reconfigure.server import Server
 from geometry_msgs.msg import Pose
 from move_base_msgs.msg import *
 from tf.transformations import quaternion_from_euler
-from infobot_find_viewpoint.cfg import InfoBotFindViewpointNodeConfig
+from infobot_find_viewpoint.cfg import InfoBotFindViewpointConfig
 from infobot_find_viewpoint_msgs.msg import *
 from infobot_find_viewpoint_msgs.srv import *
 from infobot_map_msgs.srv import *
@@ -38,8 +38,8 @@ def publish_pmap_octomap(pmap_filename, octomap_fiilename):
 
 
 def publish_pmap_octomap_topomap(pmap_filename, octomap_fiilename, topomap_filename):
-    rospy.logwarn("IGNORES INPUT topomap_frame_id. Uses \"map\" instead.")
     publish_pmap_octomap(pmap_filename, octomap_fiilename)
+    rospy.logwarn("IGNORES INPUT topomap_frame_id. Uses \"map\" instead.")
     publish_topomap_resp = call_srv("publish_topomap", PublishTopologicalMap, (topomap_filename, ""))
     if not publish_topomap_resp or not publish_topomap_resp.success:
         return False
@@ -121,7 +121,7 @@ class FindViewpointNode(object):
         self._action_name = name
 
         # calls self._reconfigure_callback!
-        self._config_server = Server(InfoBotFindViewpointNodeConfig, self._reconfigure_callback)
+        self._config_server = Server(InfoBotFindViewpointConfig, self._reconfigure_callback)
 
         self._as = actionlib.SimpleActionServer(
             self._action_name, FindViewpointAction, execute_cb=self._execute_cb, auto_start=False)
@@ -130,6 +130,10 @@ class FindViewpointNode(object):
         rospy.spin()  # for config server
 
     def _reconfigure_callback(self, config, level):
+        rospy.loginfo("Setting parameters:")
+        rospy.loginfo("-> camera_trans_z: %f" % config.camera_trans_z)
+        rospy.loginfo("-> rect_filter_margin: %f" % config.rect_filter_margin)
+        rospy.loginfo("-> max_iter: %d" % config.max_iter)
         self._camera_trans_z = config.camera_trans_z
         self._rect_filter_margin = config.rect_filter_margin
         self._max_iter = config.max_iter
@@ -157,7 +161,7 @@ class FindViewpointNode(object):
             rospy.logerr("%s: Error while extracting poses." % self._action_name)
             abort = True
 
-        max_iter = rospy.get_param("~num_iter", FindViewpointNode.DEFAULT_NUM_ITER)
+        max_iter = self._max_iter
         cur_iter = 0
         prev_max_pose = None
         prev_real_vis_val = -1
