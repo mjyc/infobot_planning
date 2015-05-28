@@ -30,6 +30,8 @@
     <arg name="image_topic" value="/prosilica_vga/image_rect_color"/>
     <arg name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
 
+    <arg name="fov_grid_res" value="50"/>
+
     <arg name="rect_filter_margin" default="1.5"/>
     <arg name="camera_trans_z" default="1.314"/>
     <arg name="num_iter" default="3"/>

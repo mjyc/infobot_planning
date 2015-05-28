@@ -230,7 +230,7 @@ inline visualization_msgs::MarkerArray createVisValsMarkers(
 // 3D Utils
 //----------------------------------------------------------------------
 
-void computeFOVEgdePoses(const geometry_msgs::Pose &cameraPose,
+inline void computeFOVEgdePoses(const geometry_msgs::Pose &cameraPose,
     const double horizontalAngleOfView,
     const double verticalAngleOfView,
     std::vector<geometry_msgs::Pose> &fovEdgePoses)
@@ -262,7 +262,7 @@ void computeFOVEgdePoses(const geometry_msgs::Pose &cameraPose,
   fovEdgePoses[3] = p4;
 }
 
-void computeFOVGridPoints(const std::vector<geometry_msgs::Pose> &fovEdgePoses,
+inline void computeFOVGridPoints(const std::vector<geometry_msgs::Pose> &fovEdgePoses,
     const int fovGridResolution,
     std::vector<geometry_msgs::Point> &fovEdgePoints)
 {
@@ -306,12 +306,12 @@ void computeFOVGridPoints(const std::vector<geometry_msgs::Pose> &fovEdgePoses,
   }
 }
 
-bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
+inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
     const double horizontalAngleOfView,
     const double verticalAngleOfView,
     const double depthMax,
-    const std::string &frame_id,
     const int fovGridResolution,
+    const double distanceFactor,
     octomap::KeySet &visibleCells,
     double &visibilityValue,
     octomap::OcTree* octree)
@@ -350,6 +350,11 @@ bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
       if (node->getValue() > probValOffset)
       {
         visibilityValue += node->getValue() - probValOffset;
+        // distance weighting
+        if (distanceFactor > 0)
+          visibilityValue *= cameraOrigin.distance(result) / depthMax * distanceFactor;
+        else if (distanceFactor < 0)
+          visibilityValue *= (depthMax - cameraOrigin.distance(result)) / depthMax * -1.0 * distanceFactor;
         visibleCells.insert(resultKey);
       }
     }

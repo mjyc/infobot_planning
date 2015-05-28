@@ -41,6 +41,7 @@ private:
   double vertical_angle_of_view_;
   double depth_max_;
   int fov_grid_res_;
+  double dist_factor_;
   double height_mean_;
   double height_var_;
 
@@ -94,7 +95,8 @@ void VisibilityReasonerNode::reconfigureCallback(
   ROS_INFO("-> horizontal_angle_of_view: %f", new_config.horizontal_angle_of_view);
   ROS_INFO("-> vertical_angle_of_view: %f", new_config.vertical_angle_of_view);
   ROS_INFO("-> depth_max: %f", new_config.depth_max);
-  ROS_INFO("-> fov_grid_resolution: %d", new_config.fov_grid_res);
+  ROS_INFO("-> fov_grid_res: %d", new_config.fov_grid_res);
+  ROS_INFO("-> dist_factor: %f", new_config.dist_factor);
   ROS_INFO("-> height_mean: %f", new_config.height_mean);
   ROS_INFO("-> height_var: %f", new_config.height_var);
 
@@ -102,6 +104,7 @@ void VisibilityReasonerNode::reconfigureCallback(
   vertical_angle_of_view_ = new_config.vertical_angle_of_view;
   depth_max_ = new_config.depth_max;
   fov_grid_res_ = new_config.fov_grid_res;
+  dist_factor_ = new_config.dist_factor;
   height_mean_ = new_config.height_mean;
   height_var_ = new_config.height_var;
 }
@@ -191,8 +194,8 @@ bool VisibilityReasonerNode::computeVisValueSrvCb(
 
   double visValue = 0.0;
   octomap::KeySet visibleCells;
-  if (!computeVisibilityValue(req.camera_pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_, frame_id,
-                              fov_grid_res_, visibleCells, visValue, octree))
+  if (!computeVisibilityValue(req.camera_pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
+                              fov_grid_res_, dist_factor_, visibleCells, visValue, octree))
   {
     delete octree;
     return false;
@@ -302,8 +305,8 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
 
     double visValue = 0.0;
     octomap::KeySet visibleCells;
-    if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_, frame_id,
-                                fov_grid_res_, visibleCells, visValue, octree))
+    if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
+                                fov_grid_res_, dist_factor_, visibleCells, visValue, octree))
     {
       ROS_ERROR("Failed to compute a visibility value.");
       delete octree;
