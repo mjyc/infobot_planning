@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(octomap REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-generate_dynamic_reconfigure_options(cfg/InfoBotFindViewpoint.cfg)
+generate_dynamic_reconfigure_options(cfg/InfoBotFindViewpointVis.cfg cfg/InfoBotFindViewpoint.cfg)
 
 catkin_package(
     # INCLUDE_DIRS include

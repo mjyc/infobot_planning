@@ -8,7 +8,7 @@
 #include <geometry_msgs/Pose.h>
 #include <octomap/octomap.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <infobot_find_viewpoint/InfoBotFindViewpointConfig.h>
+#include <infobot_find_viewpoint/InfoBotFindViewpointVisConfig.h>
 #include <infobot_find_viewpoint_msgs/GetProbabilityOctomapSurface.h>
 #include <infobot_find_viewpoint_msgs/GetProbabilityOctomapHeight.h>
 #include <infobot_find_viewpoint_msgs/ComputeVisibilityValue.h>
@@ -35,7 +35,7 @@ private:
   ros::Publisher visibleOctomapPub_;
   ros::Publisher visValsMarkersPub_;
 
-  dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointConfig> config_server_;
+  dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointVisConfig> config_server_;
 
   double horizontal_angle_of_view_;
   double vertical_angle_of_view_;
@@ -45,7 +45,7 @@ private:
   double height_var_;
 
 private:
-  void reconfigureCallback(const infobot_find_viewpoint::InfoBotFindViewpointConfig &new_config,
+  void reconfigureCallback(const infobot_find_viewpoint::InfoBotFindViewpointVisConfig &new_config,
                            uint32_t level);
   bool computeVisValueSrvCb(infobot_find_viewpoint_msgs::ComputeVisibilityValue::Request  &req,
                             infobot_find_viewpoint_msgs::ComputeVisibilityValue::Response &res);
@@ -75,7 +75,7 @@ VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
   cameraFOVMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_reasoner_fov_markers", 10, true);
   visValsMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_values_markers", 10, true);
 
-  dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointConfig>::CallbackType config_cb =
+  dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointVisConfig>::CallbackType config_cb =
       boost::bind(&VisibilityReasonerNode::reconfigureCallback, this, _1, _2);
   config_server_.setCallback(config_cb);
 }
@@ -86,8 +86,9 @@ void VisibilityReasonerNode::spin()
   ros::spin();
 }
 
-void VisibilityReasonerNode::reconfigureCallback(const infobot_find_viewpoint::InfoBotFindViewpointConfig &new_config,
-                                                 const uint32_t level)
+void VisibilityReasonerNode::reconfigureCallback(
+  const infobot_find_viewpoint::InfoBotFindViewpointVisConfig &new_config,
+  const uint32_t level)
 {
   ROS_INFO("Setting parameters:");
   ROS_INFO("-> horizontal_angle_of_view: %f", new_config.horizontal_angle_of_view);
