@@ -5,6 +5,4 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
-generate_messages(DEPENDENCIES)
-
 catkin_package()
