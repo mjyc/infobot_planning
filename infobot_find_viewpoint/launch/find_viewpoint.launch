@@ -32,7 +32,7 @@
   </node>
 
   <!-- FindViewpoint Related -->
-  <node name="image_saver" pkg="infobot_image_saver" type="image_saver_node" output="screen">
+  <node name="image_sever" pkg="infobot_image_sever" type="image_sever_node" output="screen">
     <param name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
 
     <remap from="image" to="$(arg image_topic)"/>

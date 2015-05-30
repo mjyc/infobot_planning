@@ -15,6 +15,7 @@
   <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>octomap</build_depend>
   <build_depend>geometry_msgs</build_depend>
+  <build_depend>move_base_msgs</build_depend>
   <build_depend>octomap_msgs</build_depend>
   <build_depend>infobot_map_msgs</build_depend>
   <build_depend>infobot_topo_msgs</build_depend>
@@ -25,15 +26,21 @@
   <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>octomap</run_depend>
   <run_depend>geometry_msgs</run_depend>
+  <run_depend>move_base_msgs</run_depend>
   <run_depend>octomap_msgs</run_depend>
   <run_depend>infobot_map_msgs</run_depend>
   <run_depend>infobot_topo_msgs</run_depend>
   <run_depend>visualization_msgs</run_depend>
+  <run_depend>infobot_move_base</run_depend>
   <run_depend>infobot_map_store</run_depend>
   <run_depend>infobot_pmap_store</run_depend>
   <run_depend>infobot_octomap_store</run_depend>
   <run_depend>infobot_topomap_store</run_depend>
   <run_depend>infobot_find_viewpoint_msgs</run_depend>
-  <run_depend>infobot_image_saver</run_depend>
+  <run_depend>infobot_image_sever</run_depend>
+  <!-- NOTE: uncomment below pkgs to run test launch files -->
+  <!-- <run_depend>infobot_path_sever</run_depend>
+  <run_depend>infobot_uw_systems</run_depend>
+  <run_depend>infobot_uw_world</run_depend> -->
 
 </package>
