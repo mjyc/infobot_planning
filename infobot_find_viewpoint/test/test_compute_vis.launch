@@ -18,7 +18,6 @@
 
   <!-- FindViewpoint -->
   <include file="$(find infobot_find_viewpoint)/launch/find_viewpoint.launch">
-    <arg name="map_files_dirpath" value="$(find infobot_uw_world)/maps" />
     <arg name="pmap_files_dirpath" value="$(find infobot_uw_world)/pmaps" />
     <arg name="octomap_files_dirpath" value="$(find infobot_uw_world)/octomaps" />
     <arg name="topomap_files_dirpath" value="$(find infobot_uw_world)/topomaps" />
