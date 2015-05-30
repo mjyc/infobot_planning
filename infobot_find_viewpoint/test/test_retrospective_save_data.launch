@@ -1,7 +1,7 @@
 <launch>
 
-  <node pkg="infobot_path_server" type="path_saver_node" name="path_saver" output="screen" args="$(find infobot_find_viewpoint)/test/sim-simple-path.bag"/>
+  <node pkg="infobot_path_server" type="path_saver_node" name="path_saver" output="screen" args="$(find infobot_find_viewpoint)/test/sim-simple-path_retrospective.bag"/>
 
-  <node pkg="octomap_server" type="octomap_saver" name="octomap_saver" output="screen" args="$(find infobot_find_viewpoint)/test/sim-simple-model_retrospective.bt"/>
+  <node pkg="octomap_server" type="octomap_saver" name="octomap_saver" output="screen" args="$(env HOME)/octomaps/sim-simple-model_retrospective.bt"/>
 
 </launch>
