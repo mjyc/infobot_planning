@@ -1,0 +1,26 @@
+<launch>
+
+<!--   <arg name="map_name"/>
+
+  <arg name="exclude_sim" default="false" />
+  <arg name="exclude_rviz" default="false" /> -->
+
+  <rosparam param="/visibility_reasoner/fov_grid_res">50</rosparam>
+
+
+  <!-- Simulation -->
+  <!-- <include file="$(find infobot_uw_morse)/launch/simple.launch" unless="$(arg exclude_sim)">
+    <arg name="use_joystick" value="false" />
+  </include> -->
+
+  <!-- Rviz -->
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_rviz)"/> -->
+
+  <!-- FindViewpoint -->
+  <include file="$(find infobot_find_viewpoint)/launch/find_viewpoint.launch">
+    <arg name="pmap_files_dirpath" value="$(find infobot_uw_world)/pmaps" />
+    <arg name="octomap_files_dirpath" value="$(find infobot_uw_world)/octomaps" />
+    <arg name="topomap_files_dirpath" value="$(find infobot_uw_world)/topomaps" />
+  </include>
+
+</launch>

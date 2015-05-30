@@ -32,7 +32,7 @@
   <node pkg="infobot_path_server" type="path_server_node" name="path_server" output="screen">
     <param name="sampling_rate" value="50"/>
   </node>
-  <include file="$(find infobot_uw_data)/launch/record_robot_data.launch">
+  <include file="$(find infobot_find_viewpoint)/launch/record_retrospective_data.launch">
     <arg name="bag_name" value="sim-simple-robot_retrospective.bag"/>
     <arg name="sim" value="true"/>
   </include>

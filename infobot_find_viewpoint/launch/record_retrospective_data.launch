@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <arg name="bag_name" />
+  <arg name="sim" />  <!-- true if recording topics from morse simulation. -->
+
+  <arg name="options" default="" />  <!-- rosbag record options.-->
+
+
+  <!-- Cameras -->
+  <!-- NOTE: For cameras, throttling is done at the driver level! -->
+  <arg name="camera_topic_1" value="/prosilica_vga/camera_info" if="$(arg sim)" />
+  <arg name="camera_topic_2" value="/prosilica_vga/image_rect_color" if="$(arg sim)" />
+
+  <arg name="camera_topic_1" value="/prosilica/camera_info" unless="$(arg sim)" />
+  <arg name="camera_topic_2" value="/prosilica/image_rect_raw" unless="$(arg sim)" />
+
+  <!-- Localization -->
+  <arg name="loc_topic_1" value="/joint_states" />
+  <arg name="loc_topic_2" value="/mobile_base/odom" />
+  <arg name="loc_topic_3" value="/scan" />
+  <arg name="loc_topic_4" value="/tf" />
+  <arg name="loc_topic_5" value="/tf_static" />
+
+  <!-- Rosbag -->
+  <node name="rosbag" pkg="rosbag" type="record" args="-O $(env HOME)/bags/$(arg bag_name) $(arg options)
+    $(arg camera_topic_1)
+    $(arg camera_topic_2)
+    $(arg loc_topic_1)
+    $(arg loc_topic_2)
+    $(arg loc_topic_3)
+    $(arg loc_topic_4)
+    $(arg loc_topic_5)"
+  />
+
+</launch>
+
