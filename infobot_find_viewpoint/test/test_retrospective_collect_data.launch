@@ -1,0 +1,41 @@
+<launch>
+
+  <arg name="exclude_sim" default="false" />
+  <arg name="exclude_nav" default="false" />
+
+  <arg name="output_files_dirpath" default="$(env HOME)/images/"/>
+
+
+  <!-- Simulation -->
+  <include file="$(find infobot_uw_morse)/launch/simple.launch" unless="$(arg exclude_sim)">
+    <arg name="use_joystick" value="false" />
+  </include>
+
+  <!-- Navigation -->
+  <include file="$(find infobot_uw_systems)/launch/navigation.launch" unless="$(arg exclude_nav)">
+    <arg name="map_name" value="sim-simple" />
+  </include>
+
+  <!-- Nav Goals -->
+  <node pkg="infobot_move_base" type="send_multiple_goals" name="infobot_move_base_send_multiple_goals" output="screen">
+    <param name="loop" value="false"/>
+    <rosparam param="poses">[
+    [5.56564, 7.97241, -1.40826],
+    [8.2058, -5.38439, -1.40461]
+    ]</rosparam>
+  </node>
+
+  <!-- Data Collection -->
+  <include file="$(find infobot_octomap_server)/launch/octomap_mapping.launch">
+    <arg name="cloud_in"  value="/xtion/depth_registered/points"/>
+  </include>
+  <node pkg="infobot_path_server" type="path_server_node" name="path_server" output="screen">
+    <param name="sampling_rate" value="50"/>
+  </node>
+  <include file="$(find infobot_uw_data)/launch/record_robot_data.launch">
+    <arg name="bag_name" value="sim-simple-robot.bag"/>
+    <arg name="sim" value="true"/>
+  </include>
+
+
+</launch>
