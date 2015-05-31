@@ -208,21 +208,53 @@ inline visualization_msgs::MarkerArray createVisValsMarkers(
     color.g = g;
     color.b = b;
 
-    if (i == maxVisValueIndex)
-    {
-      scale.y = 0.2;
-      scale.z = 0.2;
-    }
-    else
-    {
-      scale.y = 0.05;
-      scale.z = 0.05;
-    }
+    scale.y = 0.05;
+    scale.z = 0.05;
 
     marray.markers.push_back(createMarker(frameId, ns, i, type, poses[i], scale, color));
   }
 
   return marray;
+}
+
+inline visualization_msgs::Marker createMaxVisValMarker(
+  const std::string &frameId,
+  const std::vector<geometry_msgs::Pose> &poses,
+  const std::vector<double> &vis_values)
+{
+  // check args
+  if (poses.size() != vis_values.size())
+  {
+    ROS_ERROR_STREAM(
+      "Input poses and vis_values have different sizes. poses.size()=" << poses.size() << ", vis_values.size()=" <<
+      vis_values.size());
+    visualization_msgs::Marker dummy_marker;
+    return dummy_marker;
+  }
+  int maxVisValueIndex = std::distance(vis_values.begin(), std::max_element(vis_values.begin(), vis_values.end()));
+
+  int type = visualization_msgs::Marker::ARROW;
+
+  geometry_msgs::Vector3 scale;
+  scale.x = 0.5;
+  scale.y = 0.05;
+  scale.z = 0.05;
+
+  std_msgs::ColorRGBA color;
+  color.a = 1.0;
+
+  std::string ns = "max_vis_value";
+
+  double r, g, b;
+  colorMATLABJetPalette(1.0, 0.0, 1.0, r, g, b);
+  color.r = r;
+  color.g = g;
+  color.b = b;
+
+  scale.y = 0.2;
+  scale.z = 0.2;
+
+  return createMarker(frameId, ns, 0, type, poses[maxVisValueIndex], scale, color);
 }
 
 

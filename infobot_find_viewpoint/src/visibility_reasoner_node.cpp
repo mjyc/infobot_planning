@@ -34,6 +34,7 @@ private:
   ros::Publisher cameraFOVMarkersPub_;
   ros::Publisher visibleOctomapPub_;
   ros::Publisher visValsMarkersPub_;
+  ros::Publisher maxVisValMarkersPub_;
 
   dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointVisConfig> config_server_;
 
@@ -75,6 +76,7 @@ VisibilityReasonerNode::VisibilityReasonerNode(int argc, char **argv):
   visibleOctomapPub_ = nh_.advertise<octomap_msgs::Octomap>("visible_octomap", 1, true);
   cameraFOVMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_reasoner_fov_markers", 10, true);
   visValsMarkersPub_ = nh_.advertise<visualization_msgs::MarkerArray>("/vis_values_markers", 10, true);
+  maxVisValMarkersPub_ = nh_.advertise<visualization_msgs::Marker>("/max_vis_values_marker", 10, true);
 
   dynamic_reconfigure::Server<infobot_find_viewpoint::InfoBotFindViewpointVisConfig>::CallbackType config_cb =
       boost::bind(&VisibilityReasonerNode::reconfigureCallback, this, _1, _2);
@@ -322,6 +324,7 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
   // Publish markers
   visualization_msgs::MarkerArray marray = createVisValsMarkers(frame_id, req.camera_poses, res.vis_values);
   visValsMarkersPub_.publish(marray);
+  maxVisValMarkersPub_.publish(createMaxVisValMarker(frame_id, req.camera_poses, res.vis_values));
 
   return true;
 }

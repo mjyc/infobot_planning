@@ -105,6 +105,14 @@ Visualization Manager:
       Marker Topic: /vis_values_markers
       Name: VisVals
       Namespaces:
+        vis_values: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /max_vis_values_marker
+      Name: MaxVisVal
+      Namespaces:
         {}
       Queue Size: 100
       Value: true
@@ -175,5 +183,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 920
-  X: -7
+  X: -10
   Y: 14
