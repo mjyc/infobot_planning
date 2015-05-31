@@ -2,10 +2,12 @@
 
 import rospy
 
+import numpy as np
 import actionlib
 from dynamic_reconfigure.server import Server
 from geometry_msgs.msg import Pose
 from move_base_msgs.msg import *
+from visualization_msgs.msg import *
 from tf.transformations import quaternion_from_euler
 from infobot_find_viewpoint.cfg import InfoBotFindViewpointConfig
 from infobot_find_viewpoint_msgs.msg import *
@@ -127,6 +129,8 @@ class FindViewpointNode(object):
 
         self._move_base_ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
+        self._pub_vis_values = rospy.Publisher("/vis_values_markers", MarkerArray, queue_size=10, latch=True)
+        self._pub_max_vis_value = rospy.Publisher("/max_vis_values_marker", Marker, queue_size=10, latch=True)
         self._as = actionlib.SimpleActionServer(
             self._action_name, FindViewpointAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
@@ -138,29 +142,107 @@ class FindViewpointNode(object):
         rospy.loginfo("-> camera_trans_z: %f" % config.camera_trans_z)
         rospy.loginfo("-> rect_filter_margin: %f" % config.rect_filter_margin)
         rospy.loginfo("-> max_iter: %d" % config.max_iter)
+        rospy.loginfo("-> max_move_base_iter: %d" % config.max_move_base_iter)
+        rospy.loginfo("-> move_base_filter_margin: %d" % config.move_base_filter_margin)
         self._camera_trans_z = config.camera_trans_z
         self._rect_filter_margin = config.rect_filter_margin
         self._max_iter = config.max_iter
+        self._max_move_base_iter = config.max_move_base_iter
+        self._move_base_filter_margin = config.move_base_filter_margin
         return config
 
-    def _go_to_pose(self, pose, poses):
-        rospy.logdebug("%s: Waiting for /move_base action server." % self._action_name)
-        self._move_base_ac.wait_for_server()
-        rospy.logdebug("%s: Waiting for /move_base action DONE!" % self._action_name)
-        goal = MoveBaseGoal()
-        goal.target_pose.header.stamp = rospy.get_rostime()
-        goal.target_pose.header.frame_id = self.DEFAULT_FRAME_ID
-        goal.target_pose.pose.position.x = pose.position.x
-        goal.target_pose.pose.position.y = pose.position.y
-        goal.target_pose.pose.position.z = 0.0
-        goal.target_pose.pose.orientation = pose.orientation
-        self._move_base_ac.send_goal(goal)
-        rospy.logdebug("%s: Waiting for /move_base result." % self._action_name)
-        self._move_base_ac.wait_for_result()
-        rospy.logdebug("%s: Waiting for /move_base result DONE!" % self._action_name)
+    def _create_unreachable_vis_val_markers(self, frame_id, poses, vis_values, indices):
+        marray = MarkerArray()
+        max_vis_val = max(vis_values)
+        for i in indices:
+            marker = Marker()
+            marker.header.frame_id = frame_id
+            marker.header.stamp = rospy.Time.now()
+            marker.ns = "vis_values"
+            marker.id = i
+            marker.type = Marker.ARROW
+            marker.action = Marker.ADD
+            marker.pose = poses[i]
+            marker.scale.x = 0.5
+            marker.scale.y = 0.05
+            marker.scale.z = 0.05
+            marker.color.r = 1.0 * vis_values[i] / max_vis_val
+            marker.color.g = 1.0 * vis_values[i] / max_vis_val
+            marker.color.b = 1.0 * vis_values[i] / max_vis_val
+            marker.color.a = 0.8
+            marker.lifetime = rospy.Duration()
+            marray.markers.append(marker)
+        return marray
+
+    def _create_max_vis_val_marker(self, frame_id, pose):
+        marker = Marker()
+        marker.header.frame_id = frame_id
+        marker.header.stamp = rospy.Time.now()
+        marker.ns = "max_vis_value"
+        marker.id = 0
+        marker.type = Marker.ARROW
+        marker.action = Marker.ADD
+        marker.pose = pose
+        marker.scale.x = 0.5
+        marker.scale.y = 0.2
+        marker.scale.z = 0.2
+        marker.color.r = 1.0
+        marker.color.g = 0.0
+        marker.color.b = 0.0
+        marker.color.a = 1.0
+        marker.lifetime = rospy.Duration()
+        return marker
+
+    def _try_move_base(self, max_pose, poses, vis_values):
+        # self._move_base_filter_margin
+        for i in range(self._max_move_base_iter):
+            rospy.loginfo("%s: try_move_base iter=%d." % (self._action_name, i))
+
+            rospy.logdebug("%s: Waiting for /move_base action server." % self._action_name)
+            self._move_base_ac.wait_for_server()
+            rospy.logdebug("%s: Waiting for /move_base action DONE!" % self._action_name)
+            goal = MoveBaseGoal()
+            goal.target_pose.header.stamp = rospy.get_rostime()
+            goal.target_pose.header.frame_id = self.DEFAULT_FRAME_ID
+            goal.target_pose.pose.position.x = max_pose.position.x
+            goal.target_pose.pose.position.y = max_pose.position.y
+            goal.target_pose.pose.position.z = 0.0
+            goal.target_pose.pose.orientation = max_pose.orientation
+            self._move_base_ac.send_goal(goal)
+            rospy.logdebug("%s: Waiting for /move_base result." % self._action_name)
+            self._move_base_ac.wait_for_result()
+            rospy.logdebug("%s: Waiting for /move_base result DONE!" % self._action_name)
+
+            indices_to_be_removed = []
+            if self._move_base_ac.get_state() != 3:  # not success
+                rospy.loginfo("%s: /move_base action did not succeed." % self._action_name)
+                idx = 0
+                for pose in poses:
+                    dist = np.sqrt(np.power(pose.position.x - max_pose.position.x, 2) +
+                                   np.power(pose.position.y - max_pose.position.y, 2))
+                    if (dist < self._move_base_filter_margin):
+                        indices_to_be_removed.append(idx)
+                    idx += 1
+                self._pub_vis_values.publish(self._create_unreachable_vis_val_markers(
+                    self.DEFAULT_FRAME_ID, poses, vis_values, indices_to_be_removed))
+                poses = [i for j, i in enumerate(poses) if j not in indices_to_be_removed]
+                vis_values = [i for j, i in enumerate(vis_values) if j not in indices_to_be_removed]
+                if sum(vis_values) == 0:
+                    rospy.loginfo("%s: vis_values are all zero after removing unreachable poses." % self._action_name)
+                    return []
+                next_max_vis_val_exp = max(vis_values)
+                rospy.loginfo("%s: Next max vis_value expected = %f" % (self._action_name, next_max_vis_val_exp))
+                # check if they are all zeros.
+                next_max_vis_val_exp_index = [
+                    i for i, j in enumerate(vis_values) if j == next_max_vis_val_exp][0]
+                new_max_pose_exp = poses[next_max_vis_val_exp_index]
+                max_pose = new_max_pose_exp
+                self._pub_max_vis_value.publish(self._create_max_vis_val_marker(self.DEFAULT_FRAME_ID, max_pose))
+            else:
+                break
 
         # Handle navigation failure case
-        return poses
+        return (max_pose, poses, vis_values)
 
     def execute_cb(self, goal):
 
@@ -172,6 +254,7 @@ class FindViewpointNode(object):
         preempt = False
 
         poses = []
+        vis_values = []
 
         # Get poses
         # publish maps
@@ -190,7 +273,7 @@ class FindViewpointNode(object):
         max_pose = None
         max_vis_val_obs = -1
 
-        while cur_iter < self._max_iter and not abort and not preempt:
+        while cur_iter < self._max_iter+1 and not abort and not preempt:
             rospy.loginfo("%s: iter=%d" % (self._action_name, cur_iter))
 
             if self._as.is_preempt_requested():
@@ -198,10 +281,11 @@ class FindViewpointNode(object):
                 preempt = True
                 break
 
-            if max_pose is not None:
+            if max_pose is not None and len(poses) != 0 and len(vis_values) != 0:
                 rospy.loginfo("%s: Navigating to max_pose:\n%s." % (self._action_name, max_pose))
-                # TODO: update (cur_)poses
-                poses = self._go_to_pose(max_pose, poses)
+                (max_pose, poses, vis_values) = self._try_move_base(max_pose, poses, vis_values)
+                if len(poses) == 0:
+                    abort = True
 
             compute_vis_val_resp = call_compute_vis_value_srv(max_pose, goal.pmap_to_octomap_mode)
             if not compute_vis_val_resp:
@@ -246,6 +330,7 @@ class FindViewpointNode(object):
                 break
             else:
                 max_pose = new_max_pose
+                vis_values = list(compute_vis_vals_resp.vis_values)
                 # publish feedback
                 feedback.poses = poses
                 feedback.vis_values = compute_vis_vals_resp.vis_values

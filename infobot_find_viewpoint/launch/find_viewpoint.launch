@@ -14,9 +14,11 @@
   <arg name="fov_grid_res" default="50"/>
   <arg name="dist_factor" default="0"/>
 
-  <arg name="rect_filter_margin" default="10.0"/>
   <arg name="camera_trans_z" default="1.5"/>
-  <arg name="num_iter" default="10"/>
+  <arg name="rect_filter_margin" default="5.0"/>
+  <arg name="max_iter" default="5"/>
+  <arg name="max_move_base_iter" default="5"/>
+  <arg name="move_base_filter_margin" default="2.5"/>
 
 
   <!-- Map stores -->
@@ -45,7 +47,7 @@
   <node name="find_viewpoint" pkg="infobot_find_viewpoint" type="find_viewpoint_node" output="screen">
     <param name="rect_filter_margin" value="$(arg rect_filter_margin)"/>
     <param name="camera_trans_z" value="$(arg camera_trans_z)"/>
-    <param name="num_iter" value="$(arg num_iter)"/>
+    <param name="max_iter" value="$(arg max_iter)"/>
   </node>
 
 </launch>
