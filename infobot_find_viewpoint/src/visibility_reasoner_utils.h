@@ -208,9 +208,6 @@ inline visualization_msgs::MarkerArray createVisValsMarkers(
     color.g = g;
     color.b = b;
 
-    scale.y = 0.05;
-    scale.z = 0.05;
-
     marray.markers.push_back(createMarker(frameId, ns, i, type, poses[i], scale, color));
   }
 
@@ -237,8 +234,8 @@ inline visualization_msgs::Marker createMaxVisValMarker(
 
   geometry_msgs::Vector3 scale;
   scale.x = 0.5;
-  scale.y = 0.05;
-  scale.z = 0.05;
+  scale.y = 0.2;
+  scale.z = 0.2;
 
   std_msgs::ColorRGBA color;
   color.a = 1.0;
@@ -250,9 +247,6 @@ inline visualization_msgs::Marker createMaxVisValMarker(
   color.r = r;
   color.g = g;
   color.b = b;
-
-  scale.y = 0.2;
-  scale.z = 0.2;
 
   return createMarker(frameId, ns, 0, type, poses[maxVisValueIndex], scale, color);
 }
