@@ -1,0 +1,214 @@
+#!/usr/bin/env python
+
+import rospy
+
+import sys
+import os
+import numpy as np
+import rosbag
+from geometry_msgs.msg import Pose
+from move_base_msgs.msg import *
+from tf.transformations import quaternion_from_euler, euler_from_quaternion
+from infobot_find_viewpoint_msgs.srv import *
+from infobot_map_msgs.srv import *
+from infobot_topo_msgs.srv import *
+
+
+def call_srv(srv_name, srv_type, srv_args):
+    rospy.wait_for_service(srv_name)
+    try:
+        srv_proxy = rospy.ServiceProxy(srv_name, srv_type)
+        return srv_proxy(*srv_args)
+    except rospy.ServiceException, e:
+        rospy.logerr("Service call failed: %s" % e)
+        return None
+
+
+def publish_pmap_octomap(pmap_filename, octomap_fiilename):
+    rospy.logwarn("IGNORES INPUT pmap_frame_id. Uses \"map\" instead.")
+    publish_pmap_resp = call_srv("publish_pmap", PublishProbabilityMap, (pmap_filename, ""))
+    if not publish_pmap_resp or not publish_pmap_resp.success:
+        return False
+    rospy.logwarn("IGNORES INPUT octomap_frame_id. Uses \"map\" instead.")
+    publish_octomap_resp = call_srv("publish_octomap", PublishOctomap, (octomap_fiilename, ""))
+    if not publish_octomap_resp or not publish_octomap_resp.success:
+        return False
+    return True
+
+
+def publish_pmap_octomap_topomap(pmap_filename, octomap_fiilename, topomap_filename):
+    publish_pmap_octomap(pmap_filename, octomap_fiilename)
+    rospy.logwarn("IGNORES INPUT topomap_frame_id. Uses \"map\" instead.")
+    publish_topomap_resp = call_srv("publish_topomap", PublishTopologicalMap, (topomap_filename, ""))
+    if not publish_topomap_resp or not publish_topomap_resp.success:
+        return False
+    return True
+
+
+def call_compute_vis_value_srv(pose, mode):
+    resp = call_srv("compute_vis_value", ComputeVisibilityValue, (
+        pose,
+        mode,
+        "",  # use published pmap_filename
+        "",  # use published pmap_frame
+        "",  # use published octomap_filename
+        ""   # use published octomap_frame
+    ))
+    return resp
+
+
+def get_poses_from_topomap(topomap_fiilename, z):
+    get_topomap_resp = call_srv("get_topomap", GetTopologicalMap, (topomap_fiilename, ""))
+    if not get_topomap_resp:
+        return []
+
+    poses = []
+    for place in get_topomap_resp.topomap.places:
+        for view in place.views:
+            pose = Pose()
+            pose.position.x = view.pose.x
+            pose.position.y = view.pose.y
+            pose.position.z = z
+            q = quaternion_from_euler(0, 0, view.pose.theta)
+            pose.orientation.x = q[0]
+            pose.orientation.y = q[1]
+            pose.orientation.z = q[2]
+            pose.orientation.w = q[3]
+            poses.append(pose)
+
+    return poses
+
+
+def call_compute_vis_values_srv(poses, mode):
+    resp = call_srv("compute_vis_values", ComputeVisibilityValues, (
+        poses,
+        mode,
+        "",  # use published pmap_filename
+        "",  # use published pmap_frame
+        "",  # use published octomap_filename
+        ""   # use published octomap_frame
+    ))
+    return resp
+
+
+if __name__ == "__main__":
+    rospy.init_node("retrospective_find_viewpoint")
+
+    if len(sys.argv) < 8:
+        print >> sys.stderr, ("send_goal <img_filename> <pmap_to_octomap_mode> <pmap_filename> <octomap_filename> "
+                              "<topomap_filename> <robotbag_filename> <pathbag_filename>")
+        sys.exit(1)
+
+    img_filename = sys.argv[1]
+    pmap_to_octomap_mode = int(sys.argv[2])
+    pmap_filename = sys.argv[3]
+    octomap_filename = sys.argv[4]
+    topomap_filename = sys.argv[5]
+    robotbag_filename = sys.argv[6]
+    pathbag_filename = sys.argv[7]
+
+    CAMERA_TRANS_Z = 1.314  # prosilica camera trans z
+    POSE_CANDIDATE_DIST = 0.2
+    POSE_CANDIDATE_ANG = 10 * np.pi / 180
+
+    # Get poses
+    poses = []
+    # publish maps
+    if not publish_pmap_octomap_topomap(pmap_filename, octomap_filename, topomap_filename):
+        print >> sys.stderr, "Error while publishing maps."
+        abort = True
+    # process maps
+    poses = get_poses_from_topomap(topomap_filename, CAMERA_TRANS_Z)
+    if poses == []:
+        print >> sys.stderr, "Error while extracting poses from topomap."
+        abort = True
+
+    # Get path
+    pathbag_filepath = os.path.join(os.path.expanduser("~"), "bags", pathbag_filename)
+    if not os.path.isfile(pathbag_filepath):
+        print >> sys.stderr, "%s does not exist." % pathbag_filepath
+        sys.exit()
+    pathbag = rosbag.Bag(pathbag_filepath)
+    path = pathbag.read_messages().next()[1]  # topic_name, msg, time
+
+    # Prune poses
+    visited_poses = {}
+    i = 0
+    for pose in poses:
+        cands = []
+        for pose_stamped in path.poses:
+            dist = np.sqrt(np.power(pose_stamped.pose.position.x - pose.position.x, 2) +
+                           np.power(pose_stamped.pose.position.y - pose.position.y, 2))
+            if dist < POSE_CANDIDATE_DIST:
+                cands.append(pose_stamped)
+        if len(cands) == 0:
+            continue
+
+        min_diff = 4*3  # ceil(math.pi) * num_dim_in_euler
+        best_cand = cands[0]
+        for cand in cands:
+            a1 = euler_from_quaternion([cand.pose.orientation.x,
+                                        cand.pose.orientation.y,
+                                        cand.pose.orientation.z,
+                                        cand.pose.orientation.w])
+            a2 = euler_from_quaternion([pose.orientation.x,
+                                        pose.orientation.y,
+                                        pose.orientation.z,
+                                        pose.orientation.w])
+            cur_diff = np.sum(np.fabs(np.array(a1) - np.array(a2)))
+            if cur_diff < min_diff:
+                best_cand = cand
+                min_diff = cur_diff
+        if min_diff > POSE_CANDIDATE_ANG:
+            continue
+
+        visited_poses[pose] = best_cand
+
+    # Compute Visibility
+    compute_vis_vals_resp = call_compute_vis_values_srv(visited_poses.keys(), pmap_to_octomap_mode)
+    if not compute_vis_vals_resp:
+        sys.exit(1)
+    if sum(compute_vis_vals_resp.vis_values) == 0:
+        rospy.loginfo("vis_values are all zero.")
+        sys.exit(1)
+    max_vis_val = max(compute_vis_vals_resp.vis_values)
+    max_vis_val_index = [
+        i for i, j in enumerate(compute_vis_vals_resp.vis_values) if j == max_vis_val][0]
+    max_pose = visited_poses.keys()[max_vis_val_index]
+
+    # Get images
+    robotbag_filepath = os.path.join(os.path.expanduser("~"), "bags", robotbag_filename)
+    if not os.path.isfile(robotbag_filepath):
+        print >> sys.stderr, "%s does not exist." % robotbag_filepath
+        sys.exit()
+    robotbag = rosbag.Bag(robotbag_filepath)
+
+    # Find the image
+    t_max_visited_pose = visited_poses[max_pose].header.stamp
+    min_t_diff = None
+    image_msg = None
+    for topic, msg, t in robotbag.read_messages(topics=["/prosilica_vga/image_rect_color"]):
+        t_diff = None
+        if t > t_max_visited_pose:
+            t_diff = t - t_max_visited_pose
+        else:
+            t_diff = t_max_visited_pose - t
+        # print t_diff, min_t_diff, t_max_visited_pose
+        if min_t_diff is None or t_diff < min_t_diff:
+            # print t, min_t_diff
+            min_t_diff = t_diff
+            image_msg = msg
+
+    # Save the image
+    import cv2
+    # from sensor_msgs.msg import Image
+    from cv_bridge import CvBridge
+    bridge = CvBridge()
+    cv_image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
+    cv2.imwrite("/home/mjyc/test.jpg", cv_image)
+    # cv2.namedWindow("Image window", 1)
+    # cv2.imshow("Image window", cv_image)
+    # cv2.waitKey(3)
+
+    print "Done!"
+    rospy.spin()
