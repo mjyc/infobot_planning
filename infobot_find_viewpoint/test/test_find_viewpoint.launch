@@ -3,6 +3,7 @@
   <arg name="exclude_sim" default="false" />
   <arg name="exclude_nav" default="false" />
   <arg name="exclude_rviz" default="false" />
+  <arg name="exclude_goals" default="false" />
 
   <arg name="output_files_dirpath" default="$(env HOME)/images/"/>
 
@@ -39,7 +40,7 @@
   </include>
 
   <!-- FindViewpoint Goals -->
-  <node pkg="infobot_find_viewpoint" type="send_multiple_goals" name="send_multiple_goals" output="screen">
+  <node pkg="infobot_find_viewpoint" type="send_multiple_goals" name="send_multiple_goals" unless="$(arg exclude_goals)" output="screen">
     <param name="mode" value="0"/>
     <param name="octomap_filename" value="sim-simple-model.bt"/>
     <param name="topomap_filename" value="sim-simple_corridor-topo.yaml"/>
