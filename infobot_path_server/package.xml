@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+
+  <!-- Package Info -->
+  <name>infobot_path_server</name>
+  <version>0.0.0</version>
+  <description>
+    InfoBot Framework: A node for serving/saving an path.
+  </description>
+  <author email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</author>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+
+  <license>TODO</license>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+
+  <run_depend>message_runtime</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+
+</package>

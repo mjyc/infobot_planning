@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+import rospy
+
+import sys
+
+import rosbag
+from infobot_path_server.srv import *
+
+
+def get_path_client():
+    rospy.wait_for_service("get_path")
+    try:
+        get_path = rospy.ServiceProxy("get_path", GetPath)
+        resp = get_path()
+        return resp.path
+    except rospy.ServiceException, e:
+        print "Service call failed: %s" % e
+
+
+def usage():
+    return "%s out_filename" % sys.argv[0]
+
+if __name__ == "__main__":
+    rospy.init_node("path_saver_node")
+
+    out_filename = ""
+    if len(sys.argv) >= 2:
+        out_filename = sys.argv[1]
+    else:
+        print usage()
+        sys.exit(1)
+
+    path = get_path_client()
+
+    try:
+        bag = rosbag.Bag(out_filename, "w")
+        bag.write("path", path)
+    finally:
+        bag.close()

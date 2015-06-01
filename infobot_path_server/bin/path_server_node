@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+
+import rospy
+
+import copy
+import threading
+
+import tf
+from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Path
+from infobot_path_server.srv import *
+
+
+class PathSeverNode:
+
+    DEFAULT_SAMPLING_RATE = 10
+    DEFAULT_MAX_PATH_LEN = 1000000
+    DEFAULT_WORLD_FRAME_ID = "/map"
+    DEFAULT_ROBOT_FRAME_ID = "/base_link"
+
+    def __init__(self):
+
+        self._lock = threading.Lock()
+
+        rospy.init_node("path_server", anonymous=True)
+
+        self._pose_stampeds = []
+        self._sampling_rate = rospy.get_param(
+            "~sampling_rate", self.DEFAULT_SAMPLING_RATE)
+        self._max_path_len = rospy.get_param(
+            "~max_path_len", self.DEFAULT_MAX_PATH_LEN)
+        self._world_framd_id = rospy.get_param(
+            "~world_framd_id", self.DEFAULT_WORLD_FRAME_ID)
+        self._robot_frame_id = rospy.get_param(
+            "~robot_frame_id", self.DEFAULT_ROBOT_FRAME_ID)
+
+        rospy.Service("get_path", GetPath, self.handle_get_path)
+
+        self._loop()
+
+    def _loop(self):
+        listener = tf.TransformListener()
+        rate = rospy.Rate(self._sampling_rate)
+
+        while not rospy.is_shutdown():
+
+            t = rospy.Time.now()
+            try:
+                (trans, rot) = listener.lookupTransform(self._world_framd_id, self._robot_frame_id, t)
+            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                continue
+
+            pose_stamped = PoseStamped()
+            pose_stamped.header.stamp = t
+            pose_stamped.header.frame_id = self._world_framd_id
+            pose_stamped.pose.position.x = trans[0]
+            pose_stamped.pose.position.y = trans[1]
+            pose_stamped.pose.position.z = trans[2]
+            pose_stamped.pose.orientation.x = rot[0]
+            pose_stamped.pose.orientation.y = rot[1]
+            pose_stamped.pose.orientation.z = rot[2]
+            pose_stamped.pose.orientation.w = rot[3]
+
+            with self._lock:
+                if len(self._pose_stampeds) < self._max_path_len:
+                    self._pose_stampeds.append(pose_stamped)
+                else:
+                    rospy.logwarn("Current path has more than %d poses. Stopped collecting poses." % self._max_path_len)
+
+            rate.sleep()
+
+    def handle_get_path(self, req):
+        pose_stampeds = None
+        with self._lock:
+            pose_stampeds = copy.deepcopy(self._pose_stampeds)
+        path = Path()
+        path.header.stamp = rospy.Time.now()
+        path.header.frame_id = self._world_framd_id
+        path.poses = pose_stampeds
+
+        return GetPathResponse(path)
+
+if __name__ == "__main__":
+    node = PathSeverNode()
