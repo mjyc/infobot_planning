@@ -29,6 +29,7 @@
   <run_depend>octomap</run_depend>
   <run_depend>cv_bridge</run_depend>
   <run_depend>python-opencv</run_depend>
+  <run_depend>infobot_image_server</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>move_base_msgs</run_depend>
   <run_depend>octomap_msgs</run_depend>
@@ -41,7 +42,6 @@
   <run_depend>infobot_octomap_store</run_depend>
   <run_depend>infobot_topomap_store</run_depend>
   <run_depend>infobot_find_viewpoint_msgs</run_depend>
-  <run_depend>infobot_image_sever</run_depend>
   <!-- NOTE: uncomment below pkgs to run test launch files -->
   <!-- <run_depend>infobot_path_server</run_depend>
   <run_depend>infobot_uw_systems</run_depend>
