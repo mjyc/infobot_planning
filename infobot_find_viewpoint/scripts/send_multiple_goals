@@ -16,21 +16,35 @@ if __name__ == "__main__":
     rospy.init_node("find_viewpoint_send_multiple_goal")
 
     # Reads node ROS parameters.
+    pmap_filenames = []
     try:
         pmap_filenames = rospy.get_param('~pmap_filenames')
     except KeyError as e:
         rospy.logfatal(rospy.get_name() + ": Missing parameter: " + str(e))
+        sys.exit(-1)
+    img_filenames = []
+    try:
+        img_filenames = rospy.get_param('~img_filenames')
+    except KeyError as e:
+        rospy.logwarn(rospy.get_name() + ": Missing parameter: " + str(e))
+        for pmap_filename in pmap_filenames:
+            img_filenames.append(pmap_filename + ".jpg")
+        rospy.logwarn(rospy.get_name() + ": Using default img_filenames instead:\n" + str(img_filenames))
+    if len(pmap_filenames) != len(img_filenames):
+        rospy.logfatal(rospy.get_name() + ": pmap_filenames and img_filenames have different number of elements.")
         sys.exit(-1)
     pmap_to_octomap_mode = rospy.get_param("~pmap_to_octomap_mode", DEFAULT_PMAP_TO_OCTOMAP_MODE)
     octomap_filename = rospy.get_param("~octomap_filename", DEFAULT_OCTOMAP_FILENAME)
     topomap_filename = rospy.get_param("~topomap_filename", DEFAULT_TOPOMAP_FILENAME)
 
     # Send goals one by one.
-    for pmap_filename in pmap_filenames:
+    for i in range(len(pmap_filenames)):
+        pmap_filename = pmap_filenames[i]
+        img_filename = img_filenames[i]
         action_client = actionlib.SimpleActionClient("find_viewpoint", FindViewpointAction)
         action_client.wait_for_server()
         goal = FindViewpointGoal()
-        goal.img_filename = pmap_filename + ".jpg"  # fix this line based on your need
+        goal.img_filename = img_filename
         goal.pmap_to_octomap_mode = pmap_to_octomap_mode
         goal.pmap_filename = pmap_filename
         goal.pmap_frame_id = ""
