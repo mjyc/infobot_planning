@@ -1,26 +1,37 @@
 <launch>
 
-<!--   <arg name="map_name"/>
+  <arg name="map_name"/>
 
-  <arg name="exclude_sim" default="false" />
-  <arg name="exclude_rviz" default="false" /> -->
+  <arg name="exclude_rviz" default="false" />
 
-  <rosparam param="/visibility_reasoner/fov_grid_res">50</rosparam>
-
-
-  <!-- Simulation -->
-  <!-- <include file="$(find infobot_uw_morse)/launch/simple.launch" unless="$(arg exclude_sim)">
-    <arg name="use_joystick" value="false" />
-  </include> -->
 
   <!-- Rviz -->
-  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_rviz)"/> -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find infobot_find_viewpoint)/test/compute_vis.rviz" unless="$(arg exclude_rviz)"/>
 
   <!-- FindViewpoint -->
   <include file="$(find infobot_find_viewpoint)/launch/find_viewpoint.launch">
     <arg name="pmap_files_dirpath" value="$(find infobot_uw_world)/pmaps" />
     <arg name="octomap_files_dirpath" value="$(find infobot_uw_world)/octomaps" />
     <arg name="topomap_files_dirpath" value="$(find infobot_uw_world)/topomaps" />
+
+    <arg name="fov_grid_res" value="50" />
   </include>
+
+  <!-- Retrospective -->
+  <node name="retrospective_query" pkg="infobot_find_viewpoint" type="retrospective_query" args="
+    $(find infobot_find_viewpoint)/test/test.jpg
+    0
+    sim-simple-room1.yaml
+    home/sim-simple-model_retrospective.bt
+    sim-simple_corridor-topo.yaml
+    sim-simple-robot_retrospective.bag
+    sim-simple-path_retrospective.bag"
+    output="screen">
+    <param name="camera_trans_z" value="1.314"/>
+    <param name="pose_candidate_min_dist" value="0.2"/>
+    <param name="pose_candidate_min_ang_diff" value="0.261799388"/>  <!-- 15 deg -->
+    <param name="camera_topic_name" value="/prosilica_vga/image_rect_color"/>
+    <param name="visualization_on" value="false"/>
+  </node>
 
 </launch>

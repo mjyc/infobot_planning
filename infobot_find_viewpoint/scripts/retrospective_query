@@ -5,7 +5,9 @@ import rospy
 import sys
 import os
 import numpy as np
+import cv2
 import rosbag
+from cv_bridge import CvBridge
 from geometry_msgs.msg import Pose
 from move_base_msgs.msg import *
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
@@ -92,11 +94,11 @@ def call_compute_vis_values_srv(poses, mode):
 
 
 if __name__ == "__main__":
-    rospy.init_node("retrospective_find_viewpoint")
+    rospy.init_node("retrospective_query")
 
     if len(sys.argv) < 8:
-        print >> sys.stderr, ("send_goal <img_filename> <pmap_to_octomap_mode> <pmap_filename> <octomap_filename> "
-                              "<topomap_filename> <robotbag_filename> <pathbag_filename>")
+        print >> sys.stderr, ("%s <img_filename> <pmap_to_octomap_mode> <pmap_filename> <octomap_filename> "
+                              "<topomap_filename> <robotbag_filename> <pathbag_filename>" % rospy.get_name())
         sys.exit(1)
 
     img_filename = sys.argv[1]
@@ -107,23 +109,30 @@ if __name__ == "__main__":
     robotbag_filename = sys.argv[6]
     pathbag_filename = sys.argv[7]
 
-    CAMERA_TRANS_Z = 1.314  # prosilica camera trans z
-    POSE_CANDIDATE_DIST = 0.2
-    POSE_CANDIDATE_ANG = 10 * np.pi / 180
+    print sys.argv
 
-    # Get poses
+    camera_trans_z = rospy.get_param("~camera_trans_z", 1.5)
+    pose_candidate_min_dist = rospy.get_param("~pose_candidate_min_dist", 0.2)  # in meters
+    pose_candidate_min_ang_diff = rospy.get_param("~pose_candidate_min_ang_diff", 20 * np.pi / 180)  # in radians
+    camera_topic_name = rospy.get_param("~camera_topic_name", "/prosilica_vga/image_rect_color")
+    visualization_on = rospy.get_param("~visualization_on", True)
+
+    print camera_trans_z, pose_candidate_min_dist, pose_candidate_min_ang_diff, camera_topic_name, visualization_on
+    print type(camera_trans_z), type(pose_candidate_min_dist), type(pose_candidate_min_ang_diff), type(camera_topic_name), type(visualization_on)
+
+    # Get poses.
     poses = []
     # publish maps
     if not publish_pmap_octomap_topomap(pmap_filename, octomap_filename, topomap_filename):
         print >> sys.stderr, "Error while publishing maps."
-        abort = True
+        sys.exit(1)
     # process maps
-    poses = get_poses_from_topomap(topomap_filename, CAMERA_TRANS_Z)
+    poses = get_poses_from_topomap(topomap_filename, camera_trans_z)
     if poses == []:
         print >> sys.stderr, "Error while extracting poses from topomap."
-        abort = True
+        sys.exit(1)
 
-    # Get path
+    # Get path.
     pathbag_filepath = os.path.join(os.path.expanduser("~"), "bags", pathbag_filename)
     if not os.path.isfile(pathbag_filepath):
         print >> sys.stderr, "%s does not exist." % pathbag_filepath
@@ -131,7 +140,7 @@ if __name__ == "__main__":
     pathbag = rosbag.Bag(pathbag_filepath)
     path = pathbag.read_messages().next()[1]  # topic_name, msg, time
 
-    # Prune poses
+    # Filter unvisited poses.
     visited_poses = {}
     i = 0
     for pose in poses:
@@ -139,12 +148,12 @@ if __name__ == "__main__":
         for pose_stamped in path.poses:
             dist = np.sqrt(np.power(pose_stamped.pose.position.x - pose.position.x, 2) +
                            np.power(pose_stamped.pose.position.y - pose.position.y, 2))
-            if dist < POSE_CANDIDATE_DIST:
+            if dist < pose_candidate_min_dist:
                 cands.append(pose_stamped)
         if len(cands) == 0:
             continue
 
-        min_diff = 4*3  # ceil(math.pi) * num_dim_in_euler
+        min_ang_diff = sys.float_info.max
         best_cand = cands[0]
         for cand in cands:
             a1 = euler_from_quaternion([cand.pose.orientation.x,
@@ -156,59 +165,59 @@ if __name__ == "__main__":
                                         pose.orientation.z,
                                         pose.orientation.w])
             cur_diff = np.sum(np.fabs(np.array(a1) - np.array(a2)))
-            if cur_diff < min_diff:
+            if cur_diff < min_ang_diff:
                 best_cand = cand
-                min_diff = cur_diff
-        if min_diff > POSE_CANDIDATE_ANG:
+                min_ang_diff = cur_diff
+        if min_ang_diff > pose_candidate_min_ang_diff:
             continue
 
         visited_poses[pose] = best_cand
 
-    # Compute Visibility
+    # Compute Visibility.
     compute_vis_vals_resp = call_compute_vis_values_srv(visited_poses.keys(), pmap_to_octomap_mode)
     if not compute_vis_vals_resp:
         sys.exit(1)
     if sum(compute_vis_vals_resp.vis_values) == 0:
-        rospy.loginfo("vis_values are all zero.")
+        rospy.loginfo("vis_values are all zero. Cannot see the requested target.")
         sys.exit(1)
-    max_vis_val = max(compute_vis_vals_resp.vis_values)
-    max_vis_val_index = [
-        i for i, j in enumerate(compute_vis_vals_resp.vis_values) if j == max_vis_val][0]
-    max_pose = visited_poses.keys()[max_vis_val_index]
+    max_vis_val_visited = max(compute_vis_vals_resp.vis_values)
+    max_vis_val_visited_index = [
+        i for i, j in enumerate(compute_vis_vals_resp.vis_values) if j == max_vis_val_visited][0]
+    max_visited_pose = visited_poses.keys()[max_vis_val_visited_index]
 
-    # Get images
+    # Get images.
     robotbag_filepath = os.path.join(os.path.expanduser("~"), "bags", robotbag_filename)
     if not os.path.isfile(robotbag_filepath):
         print >> sys.stderr, "%s does not exist." % robotbag_filepath
-        sys.exit()
+        sys.exit(1)
     robotbag = rosbag.Bag(robotbag_filepath)
 
-    # Find the image
-    t_max_visited_pose = visited_poses[max_pose].header.stamp
+    # Find the image.
+    t_max_visited_pose = visited_poses[max_visited_pose].header.stamp
     min_t_diff = None
     image_msg = None
-    for topic, msg, t in robotbag.read_messages(topics=["/prosilica_vga/image_rect_color"]):
+    for topic, msg, t in robotbag.read_messages(topics=[camera_topic_name]):
         t_diff = None
         if t > t_max_visited_pose:
             t_diff = t - t_max_visited_pose
         else:
             t_diff = t_max_visited_pose - t
-        # print t_diff, min_t_diff, t_max_visited_pose
         if min_t_diff is None or t_diff < min_t_diff:
-            # print t, min_t_diff
             min_t_diff = t_diff
             image_msg = msg
 
-    # Save the image
-    import cv2
-    # from sensor_msgs.msg import Image
-    from cv_bridge import CvBridge
+    # Save the image.
     bridge = CvBridge()
     cv_image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
-    cv2.imwrite("/home/mjyc/test.jpg", cv_image)
-    # cv2.namedWindow("Image window", 1)
-    # cv2.imshow("Image window", cv_image)
-    # cv2.waitKey(3)
+    if visualization_on:
+        print "Press any key to continue."
+        cv2.namedWindow("Best Viewpoint", 1)
+        cv2.imshow("Best Viewpoint", cv_image)
+        cv2.waitKey()
+    try:
+        cv2.imwrite(img_filename, cv_image)
+    except:
+        print >> sys.stderr, "Failed to save image: %s" % img_filename
+        sys.exit(1)
 
-    print "Done!"
-    rospy.spin()
+    print "Done! result image: %s" % img_filename
