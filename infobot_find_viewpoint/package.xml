@@ -14,6 +14,8 @@
   <build_depend>roscpp</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>octomap</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>python-opencv</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>move_base_msgs</build_depend>
   <build_depend>octomap_msgs</build_depend>
@@ -25,6 +27,8 @@
   <run_depend>roscpp</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>octomap</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>python-opencv</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>move_base_msgs</run_depend>
   <run_depend>octomap_msgs</run_depend>
@@ -39,7 +43,7 @@
   <run_depend>infobot_find_viewpoint_msgs</run_depend>
   <run_depend>infobot_image_sever</run_depend>
   <!-- NOTE: uncomment below pkgs to run test launch files -->
-  <!-- <run_depend>infobot_path_sever</run_depend>
+  <!-- <run_depend>infobot_path_server</run_depend>
   <run_depend>infobot_uw_systems</run_depend>
   <run_depend>infobot_uw_world</run_depend> -->
 
