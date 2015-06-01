@@ -37,18 +37,20 @@ rosrun infobot_find_viewpoint send_goal sim-simple-room1.jpg 0 sim-simple-room1.
 
 ### Retrospective Query Demo
 
-First, collect data from the robot using below command:
+Run:
 ```
 roslaunch infobot_find_viewpoint test_retrospective_collect_data.launch
 ```
+This command will start the morse simulation and move the robot to pre-selected waypoints.
 
-Save the path and octomap using the command below:
+Once the robot finishes navigation, run:
 ```
 roslaunch infobot_find_viewpoint test_retrospective_save_data.launch
 ```
-Note that the above command requires ~/bags/ and ~/octomap/ folders. Also kill the first command using Ctrl-C (otherwise it will continue collect data in the bag file).
+The above command requires ~/bags/ and ~/octomap/ folders, so make sure to create them before running the command. Also, make sure to kill the first command using Ctrl-C--otherwise it will continue collect data.
 
-Launch below command to see if a proper image was retrieved:
+Finally, run:
 ```
 roslaunch infobot_find_viewpoint test_retrospective_collect_data.launch
 ```
+If everything went okay, it will produce a result image in test folder.
