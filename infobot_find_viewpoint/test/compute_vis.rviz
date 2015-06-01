@@ -96,8 +96,7 @@ Visualization Manager:
       Marker Topic: /vis_reasoner_fov_markers
       Name: FOV
       Namespaces:
-        fov_edge: true
-        fov_grid: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -113,7 +112,7 @@ Visualization Manager:
       Marker Topic: /max_vis_values_marker
       Name: MaxVisVal
       Namespaces:
-        {}
+        max_vis_value: true
       Queue Size: 100
       Value: true
     - Class: octomap_rviz_plugin/OccupancyGrid
@@ -123,7 +122,7 @@ Visualization Manager:
       Octomap Topic: /visible_octomap
       Queue Size: 5
       Value: true
-      Voxel Coloring: Z-Axis
+      Voxel Coloring: Cell Probability
       Voxel Rendering: Occupied Voxels
   Enabled: true
   Global Options:
