@@ -44,14 +44,14 @@ class PathSeverNode:
 
         while not rospy.is_shutdown():
 
-            t = rospy.Time.now()
+            t = rospy.Time(0)
             try:
                 (trans, rot) = listener.lookupTransform(self._world_framd_id, self._robot_frame_id, t)
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 continue
 
             pose_stamped = PoseStamped()
-            pose_stamped.header.stamp = t
+            pose_stamped.header.stamp = rospy.Time.now()
             pose_stamped.header.frame_id = self._world_framd_id
             pose_stamped.pose.position.x = trans[0]
             pose_stamped.pose.position.y = trans[1]
