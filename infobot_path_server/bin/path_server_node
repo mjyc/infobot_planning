@@ -51,7 +51,7 @@ class PathSeverNode:
                 continue
 
             pose_stamped = PoseStamped()
-            pose_stamped.header.stamp = t
+            pose_stamped.header.stamp = rospy.Time.now()
             pose_stamped.header.frame_id = self._world_framd_id
             pose_stamped.pose.position.x = trans[0]
             pose_stamped.pose.position.y = trans[1]
