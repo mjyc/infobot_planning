@@ -315,7 +315,12 @@ bool ProbabilityMapToOctomapNode::applyProbabilityMapToOctomapSurface(
   double minX, minY, minZ, maxX, maxY, maxZ;
   octree->getMetricMin(minX, minY, minZ);
   octree->getMetricMax(maxX, maxY, maxZ);
-  ROS_DEBUG("BBX Min Coord: %d %d %d / BBX Max Coord: %d %d %d", minX, minY, minZ, maxX, maxY, maxZ);
+  ROS_DEBUG("BBX Min Coord: %f %d %d / BBX Max Coord: %d %d %d", minX, minY, minZ, maxX, maxY, maxZ);
+  if (minX == minY && minY == minZ && minZ == maxX && maxX == maxY && maxY == maxZ && maxZ == 0.0)
+  {
+    ROS_ERROR("Received octomap is empty.");
+    return false;
+  }
   for (int h = 0; h < height; ++h)
   {
     for (int w = 0; w < width; ++w)
@@ -418,7 +423,12 @@ bool ProbabilityMapToOctomapNode::applyProbabilityMapToOctomapHeight(
   double minX, minY, minZ, maxX, maxY, maxZ;
   octree->getMetricMin(minX, minY, minZ);
   octree->getMetricMax(maxX, maxY, maxZ);
-  ROS_DEBUG("BBX Min Coord: %d %d %d / BBX Max Coord: %d %d %d", minX, minY, minZ, maxX, maxY, maxZ);
+  ROS_DEBUG("BBX Min Coord: %f %f %f / BBX Max Coord: %f %f %f", minX, minY, minZ, maxX, maxY, maxZ);
+  if (minX == minY && minY == minZ && minZ == maxX && maxX == maxY && maxY == maxZ && maxZ == 0.0)
+  {
+    ROS_ERROR("Received octomap is empty.");
+    return false;
+  }
   for (int h = 0; h < height; ++h)
   {
     for (int w = 0; w < width; ++w)
