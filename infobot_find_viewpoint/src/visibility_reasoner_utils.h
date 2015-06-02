@@ -184,6 +184,10 @@ inline visualization_msgs::MarkerArray createVisValsMarkers(
       vis_values.size());
     return marray;
   }
+  else if (poses.size() == 0)
+  {
+    return marray;
+  }
   int maxVisValueIndex = std::distance(vis_values.begin(), std::max_element(vis_values.begin(), vis_values.end()));
 
   int type = visualization_msgs::Marker::ARROW;
@@ -200,7 +204,9 @@ inline visualization_msgs::MarkerArray createVisValsMarkers(
   double maxVisibilityValue = vis_values[maxVisValueIndex];
   for (int i = 0; i < vis_values.size(); ++i)
   {
-    double v = vis_values[i] / maxVisibilityValue;
+    double v = vis_values[i];
+    if (maxVisibilityValue != 0.0)
+      v /= maxVisibilityValue;
 
     double r, g, b;
     colorMATLABJetPalette(v, 0.0, 1.0, r, g, b);

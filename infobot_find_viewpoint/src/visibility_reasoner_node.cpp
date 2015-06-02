@@ -281,6 +281,9 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
   std::string frame_id = poctomap.header.frame_id;
 
   // Compute Visibility Value.
+  if (req.camera_poses.size() == 0)
+    return true;
+
   octomap::OcTree* octree = NULL;
   octomap::AbstractOcTree* tree = octomap_msgs::msgToMap(poctomap);
   if (tree)
