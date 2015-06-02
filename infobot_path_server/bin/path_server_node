@@ -44,7 +44,7 @@ class PathSeverNode:
 
         while not rospy.is_shutdown():
 
-            t = rospy.Time.now()
+            t = rospy.Time(0)
             try:
                 (trans, rot) = listener.lookupTransform(self._world_framd_id, self._robot_frame_id, t)
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
