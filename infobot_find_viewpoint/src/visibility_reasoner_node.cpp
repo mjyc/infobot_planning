@@ -168,8 +168,9 @@ bool VisibilityReasonerNode::computeVisValueSrvCb(
   visualization_msgs::MarkerArray marrayFOVEdges = createFOVEdgeMarkers(frame_id, fovEdgePoses, lineOfSightLen);
 
   std::vector<geometry_msgs::Point> fovGridPoints;
-  int gridResolution = 10;
-  computeFOVGridPoints(fovEdgePoses, gridResolution, fovGridPoints);
+  // FOR DEBUG
+  // int gridResolution = 10;
+  // computeFOVGridPoints(fovEdgePoses, gridResolution, fovGridPoints);
   visualization_msgs::MarkerArray marrayFOVGrid = createFOVGridMarkers(frame_id, fovGridPoints);
 
   visualization_msgs::MarkerArray marray;
