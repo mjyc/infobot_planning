@@ -117,9 +117,6 @@ if __name__ == "__main__":
     camera_topic_name = rospy.get_param("~camera_topic_name", "/prosilica_vga/image_rect_color")
     visualization_on = rospy.get_param("~visualization_on", True)
 
-    print camera_trans_z, pose_candidate_min_dist, pose_candidate_min_ang_diff, camera_topic_name, visualization_on
-    print type(camera_trans_z), type(pose_candidate_min_dist), type(pose_candidate_min_ang_diff), type(camera_topic_name), type(visualization_on)
-
     # Get poses.
     poses = []
     # publish maps
