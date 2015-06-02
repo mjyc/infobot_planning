@@ -30,6 +30,7 @@
   <run_depend>cv_bridge</run_depend>
   <run_depend>python-opencv</run_depend>
   <run_depend>infobot_image_server</run_depend>
+  <run_depend>nav_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>move_base_msgs</run_depend>
   <run_depend>octomap_msgs</run_depend>
