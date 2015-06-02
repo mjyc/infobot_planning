@@ -11,8 +11,10 @@
   <arg name="output_files_dirpath" default="$(env HOME)"/>
 
   <!-- 50: fast / inaccurate, 1000: slow / accurate -->
+  <arg name="horizontal_angle_of_view" default="1.01229097"/>  <!-- xtion/kinect hfov -->
+  <arg name="vertical_angle_of_view" default="0.785398163"/>  <!-- xtion/kinect vfov -->
   <arg name="fov_grid_res" default="50"/>
-  <arg name="dist_factor" default="0"/>
+  <arg name="dist_factor" default="1.0"/>
 
   <arg name="camera_trans_z" default="1.5"/>
   <arg name="rect_filter_margin" default="5.0"/>
@@ -41,6 +43,8 @@
   </node>
   <node name="pmap_to_octomap" pkg="infobot_find_viewpoint" type="pmap_to_octomap" output="screen"/>
   <node name="visibility_reasoner" pkg="infobot_find_viewpoint" type="visibility_reasoner" output="screen">
+    <param name="horizontal_angle_of_view" value="$(arg horizontal_angle_of_view)"/>
+    <param name="vertical_angle_of_view" value="$(arg vertical_angle_of_view)"/>
     <param name="fov_grid_res" value="$(arg fov_grid_res)"/>
     <param name="dist_factor" value="$(arg dist_factor)"/>
   </node>
