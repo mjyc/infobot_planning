@@ -23,6 +23,7 @@ def call_srv(srv_name, srv_type, srv_args):
         return srv_proxy(*srv_args)
     except rospy.ServiceException, e:
         rospy.logerr("Service call failed: %s" % e)
+        print srv_args
         return None
 
 
@@ -109,8 +110,6 @@ if __name__ == "__main__":
     robotbag_filename = sys.argv[6]
     pathbag_filename = sys.argv[7]
 
-    print sys.argv
-
     camera_trans_z = rospy.get_param("~camera_trans_z", 1.5)
     pose_candidate_min_dist = rospy.get_param("~pose_candidate_min_dist", 0.2)  # in meters
     pose_candidate_min_ang_diff = rospy.get_param("~pose_candidate_min_ang_diff", 20 * np.pi / 180)  # in radians
@@ -169,18 +168,22 @@ if __name__ == "__main__":
             continue
 
         visited_poses[pose] = best_cand
+    if len(visited_poses) == 0:
+        print >> sys.stderr, "There are no poses left after filtering."
+        sys.exit(1)
 
     # Compute Visibility.
     compute_vis_vals_resp = call_compute_vis_values_srv(visited_poses.keys(), pmap_to_octomap_mode)
     if not compute_vis_vals_resp:
         sys.exit(1)
     if sum(compute_vis_vals_resp.vis_values) == 0:
-        rospy.loginfo("vis_values are all zero. Cannot see the requested target.")
+        print >> sys.stderr, "vis_values are all zero. Cannot see the requested target."
         sys.exit(1)
     max_vis_val_visited = max(compute_vis_vals_resp.vis_values)
     max_vis_val_visited_index = [
         i for i, j in enumerate(compute_vis_vals_resp.vis_values) if j == max_vis_val_visited][0]
     max_visited_pose = visited_poses.keys()[max_vis_val_visited_index]
+    call_compute_vis_value_srv(max_visited_pose, pmap_to_octomap_mode)  # for debugging
 
     # Get images.
     robotbag_filepath = os.path.join(os.path.expanduser("~"), "bags", robotbag_filename)
@@ -218,3 +221,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print "Done! result image: %s" % img_filename
+
