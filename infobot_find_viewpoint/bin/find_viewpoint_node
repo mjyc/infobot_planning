@@ -273,7 +273,7 @@ class FindViewpointNode(object):
         max_pose = None
         max_vis_val_obs = -1
 
-        while cur_iter < self._max_iter+1 and not abort and not preempt:
+        while cur_iter < self._max_iter and not abort and not preempt:
             rospy.loginfo("%s: iter=%d" % (self._action_name, cur_iter))
 
             if self._as.is_preempt_requested():
@@ -340,6 +340,7 @@ class FindViewpointNode(object):
 
         # loop reached max_iter
         if cur_iter == max_iter and not abort:
+            rospy.loginfo("%s: max_iter reached." % self._action_name)
             abort = True
 
         if preempt:
