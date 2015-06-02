@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <limits>
@@ -67,6 +68,7 @@ private:
 const double ProbabilityMapToOctomapNode::DEFAULT_GROUND_HEIGHT = 0.0;
 const double ProbabilityMapToOctomapNode::MAX_SURFACE_HEIGHT = 1.5;
 const std::string ProbabilityMapToOctomapNode::DEFAULT_FRAME_ID = "map";
+
 
 //----------------------------------------------------------------------
 // Public Methods
@@ -321,7 +323,8 @@ bool ProbabilityMapToOctomapNode::applyProbabilityMapToOctomapSurface(
       double curProb = pmap.data[h * width + w];
       double x = origX + (w * res) + (res / 2.0);
       double y = origY + (h * res) + (res / 2.0);
-      if (curProb > 0.0 && x > minX && x < maxX && y > minY && y < maxY)
+      // if (curProb > 0.0 && x > minX && x < maxX && y > minY && y < maxY)
+      if (curProb > 0.0)
       {
         octomap::point3d minBBXPt(x, y, minZ);
         octomap::point3d maxBBXPt(x, y, maxZ);
@@ -423,7 +426,8 @@ bool ProbabilityMapToOctomapNode::applyProbabilityMapToOctomapHeight(
       double curProb = pmap.data[h * width + w];
       double x = origX + (w * res) + (res / 2.0);
       double y = origY + (h * res) + (res / 2.0);
-      if (curProb > 0.0 && x > minX && x < maxX && y > minY && y < maxY)
+      // if (curProb > 0.0 && x > minX && x < maxX && y > minY && y < maxY)
+      if (curProb > 0.0)
       {
         double z = distribution(generator);
         octomap::point3d pt(x, y, z);
