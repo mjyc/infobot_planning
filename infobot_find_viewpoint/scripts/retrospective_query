@@ -141,14 +141,16 @@ if __name__ == "__main__":
 
     # Filter unvisited poses.
     visited_poses = {}
-    i = 0
     for pose in poses:
         cands = []
+        j = 0
         for pose_stamped in path.poses:
-            dist = np.sqrt(np.power(pose_stamped.pose.position.x - pose.position.x, 2) +
-                           np.power(pose_stamped.pose.position.y - pose.position.y, 2))
-            if dist < pose_candidate_min_dist:
-                cands.append(pose_stamped)
+            if j % 10 == 0:
+                dist = np.sqrt(np.power(pose_stamped.pose.position.x - pose.position.x, 2) +
+                               np.power(pose_stamped.pose.position.y - pose.position.y, 2))
+                if dist < pose_candidate_min_dist:
+                    cands.append(pose_stamped)
+            j += 1
         if len(cands) == 0:
             continue
 
@@ -163,14 +165,16 @@ if __name__ == "__main__":
                                         pose.orientation.y,
                                         pose.orientation.z,
                                         pose.orientation.w])
-            cur_diff = np.sum(np.fabs(np.array(a1) - np.array(a2)))
-            if cur_diff < min_ang_diff:
+            # from: http://stackoverflow.com/questions/1878907/the-smallest-difference-between-2-angles
+            cur_diff = min((2 * np.pi) - np.fabs(a1[2] - a2[2]), np.fabs(a1[2] - a2[2]))
+            if np.fabs(cur_diff) < min_ang_diff:
                 best_cand = cand
                 min_ang_diff = cur_diff
         if min_ang_diff > pose_candidate_min_ang_diff:
             continue
 
         visited_poses[pose] = best_cand
+
     if len(visited_poses) == 0:
         print >> sys.stderr, "There are no poses left after filtering."
         sys.exit(1)
