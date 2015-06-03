@@ -350,6 +350,10 @@ class FindViewpointNode(object):
         else:
             self._as.set_succeeded(result)
 
+        rospy.loginfo("%s: Results:" % (self._action_name, cur_iter))
+        rospy.loginfo("%s:   total iter=%d" % (self._action_name, cur_iter))
+        rospy.loginfo("%s:   success=%r" % (self._action_name, (not abort) and (not preempt)))
+
 if __name__ == "__main__":
     rospy.init_node("find_viewpoint")
     FindViewpointNode(rospy.get_name())
