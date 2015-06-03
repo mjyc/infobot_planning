@@ -294,7 +294,9 @@ class FindViewpointNode(object):
             vis_val_obs = compute_vis_val_resp.vis_value
             rospy.loginfo("%s: Current vis_value observed = %f" % (self._action_name, vis_val_obs))
 
-            if vis_val_obs > max_vis_val_obs:
+            # NOTE: cur_iter==1 case is when the robot is at first goal.
+            # NOTE: as a side-effect, the program always saves an image from its first position.
+            if vis_val_obs > max_vis_val_obs or cur_iter == 1:
                 if goal.img_filename == "":
                     goal.img_filename = "find_viewpoint.jpg"
                 save_image_resp = call_srv("save_image", SaveImage, [goal.img_filename])
