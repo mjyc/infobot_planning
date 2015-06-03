@@ -172,7 +172,6 @@ if __name__ == "__main__":
                 min_ang_diff = cur_diff
         if min_ang_diff > pose_candidate_min_ang_diff:
             continue
-
         visited_poses[pose] = best_cand
 
     if len(visited_poses) == 0:
