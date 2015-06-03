@@ -52,6 +52,8 @@
     <param name="rect_filter_margin" value="$(arg rect_filter_margin)"/>
     <param name="camera_trans_z" value="$(arg camera_trans_z)"/>
     <param name="max_iter" value="$(arg max_iter)"/>
+    <param name="max_move_base_iter" value="$(arg max_move_base_iter)"/>
+    <param name="move_base_filter_margin" value="$(arg move_base_filter_margin)"/>
   </node>
 
 </launch>
