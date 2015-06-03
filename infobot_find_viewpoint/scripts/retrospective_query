@@ -140,6 +140,7 @@ if __name__ == "__main__":
     path_pub.publish(path)
 
     # Filter unvisited poses.
+    print "WARNING: Skipping some poses in path.poses to accelerate computation--might produce inaccurate results!"
     visited_poses = {}
     for pose in poses:
         cands = []
