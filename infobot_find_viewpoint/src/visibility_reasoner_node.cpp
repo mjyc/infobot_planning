@@ -42,7 +42,8 @@ private:
   double vertical_angle_of_view_;
   double depth_max_;
   int fov_grid_res_;
-  double dist_factor_;
+  double dist_factor_a_;
+  double dist_factor_b_;
   double height_mean_;
   double height_var_;
 
@@ -98,7 +99,8 @@ void VisibilityReasonerNode::reconfigureCallback(
   ROS_INFO("-> vertical_angle_of_view: %f", new_config.vertical_angle_of_view);
   ROS_INFO("-> depth_max: %f", new_config.depth_max);
   ROS_INFO("-> fov_grid_res: %d", new_config.fov_grid_res);
-  ROS_INFO("-> dist_factor: %f", new_config.dist_factor);
+  ROS_INFO("-> dist_factor_a: %f", new_config.dist_factor_a);
+  ROS_INFO("-> dist_factor_b: %f", new_config.dist_factor_b);
   ROS_INFO("-> height_mean: %f", new_config.height_mean);
   ROS_INFO("-> height_var: %f", new_config.height_var);
 
@@ -106,7 +108,8 @@ void VisibilityReasonerNode::reconfigureCallback(
   vertical_angle_of_view_ = new_config.vertical_angle_of_view;
   depth_max_ = new_config.depth_max;
   fov_grid_res_ = new_config.fov_grid_res;
-  dist_factor_ = new_config.dist_factor;
+  dist_factor_a_ = new_config.dist_factor_a;
+  dist_factor_b_ = new_config.dist_factor_b;
   height_mean_ = new_config.height_mean;
   height_var_ = new_config.height_var;
 }
@@ -198,34 +201,38 @@ bool VisibilityReasonerNode::computeVisValueSrvCb(
   double visValue = 0.0;
   octomap::KeySet visibleCells;
   if (!computeVisibilityValue(req.camera_pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
-                              fov_grid_res_, dist_factor_, visibleCells, visValue, octree))
+                              fov_grid_res_, dist_factor_a_, dist_factor_b_, visibleCells, visValue, octree))
   {
     delete octree;
     return false;
   }
 
-  // Publish visible cells as an octomap msg
+  // Create octomap for visibile area.
+  octomap::OcTree* octree_vis = NULL;
+  octree_vis = new octomap::OcTree(octree->getResolution());
+  octree_vis->setProbHit(octree->getProbHit());
+  octree_vis->setProbMiss(octree->getProbMiss());
+  octree_vis->setClampingThresMin(octree->getClampingThresMin());
+  octree_vis->setClampingThresMax(octree->getClampingThresMax());
 
-  for (octomap::OcTree::iterator it = octree->begin(), end = octree->end(); it != end; ++it)
+  // Publish visible cells as an octomap msg
+  for (octomap::KeySet::iterator it = visibleCells.begin(), end = visibleCells.end(); it != end; ++it)
   {
-    if (visibleCells.find(it.getKey()) != visibleCells.end())
-    {
-      it->setValue(octree->getClampingThresMaxLog());
-    }
-    else
-    {
-      it->setValue(octree->getClampingThresMinLog());
-    }
+    octree_vis->updateNode(*it, true);
+    octree_vis->search(*it)->setValue(octree->search(*it)->getValue());
   }
+  // don't need octree anymore
+  delete octree;
+
   octomap_msgs::Octomap visibleOctomap;
   visibleOctomap.header.frame_id = frame_id;
   visibleOctomap.header.stamp = ros::Time::now();
-  if (!octomap_msgs::fullMapToMsg(*octree, visibleOctomap))
+  if (!octomap_msgs::fullMapToMsg(*octree_vis, visibleOctomap))
     ROS_ERROR("Error serializing OctoMap. Failed to publish visible cells.");
   else
     visibleOctomapPub_.publish(visibleOctomap);
 
-  delete octree;
+  delete octree_vis;
   res.vis_value = visValue;
   return true;
 }
@@ -312,7 +319,7 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
     double visValue = 0.0;
     octomap::KeySet visibleCells;
     if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
-                                fov_grid_res_, dist_factor_, visibleCells, visValue, octree))
+                                fov_grid_res_, dist_factor_a_, dist_factor_b_, visibleCells, visValue, octree))
     {
       ROS_ERROR("Failed to compute a visibility value.");
       delete octree;
