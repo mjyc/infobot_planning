@@ -31,8 +31,12 @@
     <arg name="image_topic" value="/prosilica_vga/image_rect_color"/>
     <arg name="output_files_dirpath" value="$(arg output_files_dirpath)"/>
 
-    <arg name="fov_grid_res" value="50"/>
-    <arg name="dist_factor" value="1"/>
+    <!-- prosilica hfov & vfov -->
+    <arg name="horizontal_angle_of_view" value="1.68947872"/>
+    <arg name="vertical_angle_of_view" value="1.01229097"/>
+    <arg name="fov_grid_res" value="100"/>
+    <arg name="dist_factor_a" value="0.33"/>
+    <arg name="dist_factor_b" value="3.0"/>
 
     <arg name="rect_filter_margin" default="1.5"/>
     <arg name="camera_trans_z" default="1.314"/>
@@ -43,7 +47,7 @@
 
   <!-- FindViewpoint Goals -->
   <node pkg="infobot_find_viewpoint" type="send_multiple_goals" name="send_multiple_goals" unless="$(arg exclude_goals)" output="screen">
-    <param name="mode" value="0"/>
+    <param name="pmap_to_octomap_mode" value="1"/>
     <param name="octomap_filename" value="sim-simple-model.bt"/>
     <param name="topomap_filename" value="sim-simple_corridor-topo.yaml"/>
     <rosparam param="pmap_filenames">[

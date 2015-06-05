@@ -398,8 +398,9 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
       {
         double curVisibilityValue = node->getValue() - probValOffset;
         double w = -1.0 * distanceFactorA * fabs(cameraOrigin.distance(result) - distanceFactorB) + 1.0;
+        if (w < 0.0)
+          v = 0.0
         curVisibilityValue *= w;
-        // std::cout << fabs(cameraOrigin.distance(result) - distanceFactorB) << ", " << w << ", " << curVisibilityValue + (1.0 * probValOffset) << std::endl;
         visibilityValue += curVisibilityValue;
         node->setValue(curVisibilityValue + (1.0 * probValOffset));  // for debugging
         visibleCells.insert(resultKey);

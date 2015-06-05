@@ -20,7 +20,14 @@
     <arg name="octomap_files_dirpath" value="$(find infobot_uw_world)/octomaps" />
     <arg name="topomap_files_dirpath" value="$(find infobot_uw_world)/topomaps" />
 
-    <arg name="fov_grid_res" value="50" />
+    <!-- prosilica hfov & vfov -->
+    <arg name="horizontal_angle_of_view" value="1.68947872"/>
+    <arg name="vertical_angle_of_view" value="1.01229097"/>
+    <arg name="fov_grid_res" value="100" />
+    <arg name="dist_factor_a" value="0.1"/>
+    <arg name="dist_factor_b" value="5.0"/>
+
+    <arg name="camera_trans_z" default="1.314"/>
   </include>
 
 </launch>
