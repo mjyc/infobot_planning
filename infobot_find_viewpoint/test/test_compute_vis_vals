@@ -10,10 +10,14 @@ if __name__ == "__main__":
     pmap_filename = "sim-simple-room1.yaml"
     octomap_filename = "sim-simple-model.bt"
     topomap_filename = "sim-simple_corridor-topo.yaml"
+    # pmap_filename = "real-floor4-CSE491.yaml"
+    # octomap_filename = "real-floor4_corridor-model.bt"
+    # topomap_filename = "real-floor4_corridor-nogo-topo.yaml"
 
-    margin = 2.0
+    margin = 5.0
+    # margin = 2.5
 
-    mode = ComputeVisibilityValuesRequest.SURFACE
+    mode = ComputeVisibilityValuesRequest.HEIGHT
 
     # main
     rospy.init_node("test_compute_vis_vals", anonymous=True)
