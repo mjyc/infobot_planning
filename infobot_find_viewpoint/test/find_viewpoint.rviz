@@ -325,7 +325,6 @@ Visualization Manager:
       Name: FOV
       Namespaces:
         fov_edge: true
-        fov_grid: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -344,14 +343,15 @@ Visualization Manager:
         max_vis_value: true
       Queue Size: 100
       Value: true
-    - Class: octomap_rviz_plugin/OccupancyGrid
+    - Class: infobot_rviz_map/ProbabilityOctomap
       Enabled: true
+      Fast Render Mode: true
       Max. Octree Depth: 16
       Name: VisibleCells
       Octomap Topic: /visible_octomap
       Queue Size: 5
       Value: true
-      Voxel Coloring: Z-Axis
+      Voxel Coloring: Cell Probability
       Voxel Rendering: Occupied Voxels
   Enabled: true
   Global Options:
