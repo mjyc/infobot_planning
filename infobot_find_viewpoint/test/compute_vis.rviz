@@ -96,7 +96,7 @@ Visualization Manager:
       Marker Topic: /vis_reasoner_fov_markers
       Name: FOV
       Namespaces:
-        {}
+        fov_edge: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -116,7 +116,17 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: octomap_rviz_plugin/OccupancyGrid
+      Enabled: false
+      Max. Octree Depth: 16
+      Name: VisibleCells
+      Octomap Topic: /visible_octomap
+      Queue Size: 5
+      Value: false
+      Voxel Coloring: Cell Probability
+      Voxel Rendering: Occupied Voxels
+    - Class: infobot_rviz_map/ProbabilityOctomap
       Enabled: true
+      Fast Render Mode: true
       Max. Octree Depth: 16
       Name: VisibleCells
       Octomap Topic: /visible_octomap
@@ -149,7 +159,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 35.7215
+      Distance: 22.3142
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -161,10 +171,10 @@ Visualization Manager:
         Z: 0.861999
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.0448
+      Pitch: 0.8098
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.33815
+      Yaw: 3.98315
     Saved: ~
 Window Geometry:
   Displays:

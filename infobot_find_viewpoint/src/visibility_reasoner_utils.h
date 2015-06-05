@@ -357,7 +357,8 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
     const double verticalAngleOfView,
     const double depthMax,
     const int fovGridResolution,
-    const double distanceFactor,
+    const double distanceFactorA,
+    const double distanceFactorB,
     octomap::KeySet &visibleCells,
     double &visibilityValue,
     octomap::OcTree* octree)
@@ -395,12 +396,12 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
     {
       if (node->getValue() > probValOffset)
       {
-        visibilityValue += node->getValue() - probValOffset;
-        // distance weighting
-        if (distanceFactor > 0)
-          visibilityValue *= cameraOrigin.distance(result) / depthMax * distanceFactor;
-        else if (distanceFactor < 0)
-          visibilityValue *= (depthMax - cameraOrigin.distance(result)) / depthMax * -1.0 * distanceFactor;
+        double curVisibilityValue = node->getValue() - probValOffset;
+        double w = -1.0 * distanceFactorA * fabs(cameraOrigin.distance(result) - distanceFactorB) + 1.0;
+        curVisibilityValue *= w;
+        // std::cout << fabs(cameraOrigin.distance(result) - distanceFactorB) << ", " << w << ", " << curVisibilityValue + (1.0 * probValOffset) << std::endl;
+        visibilityValue += curVisibilityValue;
+        node->setValue(curVisibilityValue + (1.0 * probValOffset));  // for debugging
         visibleCells.insert(resultKey);
       }
     }
