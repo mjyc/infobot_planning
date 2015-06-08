@@ -14,7 +14,7 @@ from infobot_find_viewpoint_msgs.msg import *
 from infobot_find_viewpoint_msgs.srv import *
 from infobot_map_msgs.srv import *
 from infobot_topo_msgs.srv import *
-from infobot_image_sever.srv import *
+from infobot_image_server.srv import *
 
 
 def call_srv(srv_name, srv_type, srv_args):
