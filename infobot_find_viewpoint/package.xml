@@ -41,7 +41,7 @@
   <run_depend>infobot_map_store</run_depend>
   <run_depend>infobot_pmap_store</run_depend>
   <run_depend>infobot_octomap_store</run_depend>
-  <run_depend>infobot_topomap_store</run_depend>
+  <run_depend>infobot_topo_store</run_depend>
   <run_depend>infobot_find_viewpoint_msgs</run_depend>
   <!-- NOTE: uncomment below pkgs to run test launch files -->
   <!-- <run_depend>infobot_path_server</run_depend>

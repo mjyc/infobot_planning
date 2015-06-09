@@ -5,7 +5,7 @@ The demo files are dependent on `infobot_uw_world` package. However, the `infobo
 
 To run a topo-mapping demo for sim-simple env, run:
 ```
-roslaunch infobot_topo_mapping test_extract_topology_sim.launch
+roslaunch infobot_topo_mapping test_extract_topology_sim-simple.launch
 ```
 then, from a new shell, run:
 ```
