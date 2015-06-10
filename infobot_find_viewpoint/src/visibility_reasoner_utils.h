@@ -110,46 +110,46 @@ inline visualization_msgs::MarkerArray createFOVEdgeMarkers(
   scale.y = 0.05;
   scale.z = 0.05;
 
-  // DEBUG MODE
-  // std_msgs::ColorRGBA color;
-  // color.r = 1.0;
-  // color.g = 0.0;
-  // color.b = 0.0;
-  // color.a = 1.0;
-  // std_msgs::ColorRGBA color1;
-  // color1.r = 0.0;
-  // color1.g = 1.0;
-  // color1.b = 0.0;
-  // color1.a = 1.0;
-  // std_msgs::ColorRGBA color2;
-  // color2.r = 0.0;
-  // color2.g = 0.0;
-  // color2.b = 1.0;
-  // color2.a = 1.0;
-  // std_msgs::ColorRGBA color3;
-  // color3.r = 1.0;
-  // color3.g = 1.0;
-  // color3.b = 1.0;
-  // color3.a = 1.0;
-
-  // std::string ns = "fov_edge";
-  // marray.markers.push_back(createMarker(frameId, ns, 0, type, fovEdgePoses[0], scale, color));
-  // marray.markers.push_back(createMarker(frameId, ns, 1, type, fovEdgePoses[1], scale, color1));
-  // marray.markers.push_back(createMarker(frameId, ns, 2, type, fovEdgePoses[2], scale, color2));
-  // marray.markers.push_back(createMarker(frameId, ns, 3, type, fovEdgePoses[3], scale, color3));
-
-  // Visualization
+  // DEBUG MODE: Different color for each edge.
   std_msgs::ColorRGBA color;
-  color.r = 0.247;
+  color.r = 1.0;
   color.g = 0.0;
-  color.b = 0.490;
+  color.b = 0.0;
   color.a = 1.0;
+  std_msgs::ColorRGBA color1;
+  color1.r = 0.0;
+  color1.g = 1.0;
+  color1.b = 0.0;
+  color1.a = 1.0;
+  std_msgs::ColorRGBA color2;
+  color2.r = 0.0;
+  color2.g = 0.0;
+  color2.b = 1.0;
+  color2.a = 1.0;
+  std_msgs::ColorRGBA color3;
+  color3.r = 1.0;
+  color3.g = 1.0;
+  color3.b = 1.0;
+  color3.a = 1.0;
 
-  std::string ns = "fov_edge";
+  std::string ns = "fov_edges";
   marray.markers.push_back(createMarker(frameId, ns, 0, type, fovEdgePoses[0], scale, color));
-  marray.markers.push_back(createMarker(frameId, ns, 1, type, fovEdgePoses[1], scale, color));
-  marray.markers.push_back(createMarker(frameId, ns, 2, type, fovEdgePoses[2], scale, color));
-  marray.markers.push_back(createMarker(frameId, ns, 3, type, fovEdgePoses[3], scale, color));
+  marray.markers.push_back(createMarker(frameId, ns, 1, type, fovEdgePoses[1], scale, color1));
+  marray.markers.push_back(createMarker(frameId, ns, 2, type, fovEdgePoses[2], scale, color2));
+  marray.markers.push_back(createMarker(frameId, ns, 3, type, fovEdgePoses[3], scale, color3));
+
+  // CAMERA READY MODE: Same color for each edge.
+  // std_msgs::ColorRGBA color;
+  // color.r = 0.247;
+  // color.g = 0.0;
+  // color.b = 0.490;
+  // color.a = 1.0;
+
+  // std::string ns = "fov_edges";
+  // marray.markers.push_back(createMarker(frameId, ns, 0, type, fovEdgePoses[0], scale, color));
+  // marray.markers.push_back(createMarker(frameId, ns, 1, type, fovEdgePoses[1], scale, color));
+  // marray.markers.push_back(createMarker(frameId, ns, 2, type, fovEdgePoses[2], scale, color));
+  // marray.markers.push_back(createMarker(frameId, ns, 3, type, fovEdgePoses[3], scale, color));
 
   return marray;
 }
