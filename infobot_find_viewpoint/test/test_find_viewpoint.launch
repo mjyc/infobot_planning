@@ -33,7 +33,7 @@
 
     <!-- prosilica hfov & vfov -->
     <arg name="horizontal_angle_of_view" value="1.68947872"/>
-    <arg name="vertical_angle_of_view" value="1.01229097"/>
+    <arg name="vertical_angle_of_view" value="1.38579143"/>
     <arg name="fov_grid_res" value="100"/>
     <arg name="dist_factor_a" value="0.33"/>
     <arg name="dist_factor_b" value="3.0"/>
