@@ -44,6 +44,7 @@ private:
   int fov_grid_res_;
   double dist_factor_a_;
   double dist_factor_b_;
+  double ang_factor_;
   double height_mean_;
   double height_var_;
 
@@ -110,6 +111,7 @@ void VisibilityReasonerNode::reconfigureCallback(
   fov_grid_res_ = new_config.fov_grid_res;
   dist_factor_a_ = new_config.dist_factor_a;
   dist_factor_b_ = new_config.dist_factor_b;
+  ang_factor_ = new_config.ang_factor;
   height_mean_ = new_config.height_mean;
   height_var_ = new_config.height_var;
 }
@@ -201,7 +203,8 @@ bool VisibilityReasonerNode::computeVisValueSrvCb(
   double visValue = 0.0;
   octomap::KeySet visibleCells;
   if (!computeVisibilityValue(req.camera_pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
-                              fov_grid_res_, dist_factor_a_, dist_factor_b_, visibleCells, visValue, octree))
+                              fov_grid_res_, dist_factor_a_, dist_factor_b_, ang_factor_, visibleCells, visValue,
+                              octree))
   {
     delete octree;
     return false;
@@ -319,7 +322,7 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
     double visValue = 0.0;
     octomap::KeySet visibleCells;
     if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
-                                fov_grid_res_, dist_factor_a_, dist_factor_b_, visibleCells, visValue, octree))
+                                fov_grid_res_, dist_factor_a_, dist_factor_b_, ang_factor_, visibleCells, visValue, octree))
     {
       ROS_ERROR("Failed to compute a visibility value.");
       delete octree;

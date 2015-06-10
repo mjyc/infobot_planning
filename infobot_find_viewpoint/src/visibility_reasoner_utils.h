@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -359,6 +360,7 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
     const int fovGridResolution,
     const double distanceFactorA,
     const double distanceFactorB,
+    const double angleFactor,
     octomap::KeySet &visibleCells,
     double &visibilityValue,
     octomap::OcTree* octree)
@@ -380,6 +382,7 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
 
   visibilityValue = 0.0;
   int probValOffset = static_cast<int>(octree->getClampingThresMaxLog() + 0.5);
+  double cameraRotYaw = tf::getYaw(cameraPose.orientation);
   for (int i = 0; i < fovGridPoints.size(); i++)
   {
     octomap::point3d result;
@@ -397,10 +400,13 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
       if (node->getValue() > probValOffset)
       {
         double curVisibilityValue = node->getValue() - probValOffset;
-        double w = -1.0 * distanceFactorA * fabs(cameraOrigin.distance(result) - distanceFactorB) + 1.0;
-        if (w < 0.0)
-          w = 0.0;
+        double dw = -1.0 * distanceFactorA * fabs(cameraOrigin.distance(result) - distanceFactorB);
+        double angle = atan2(result.y() - cameraOrigin.y(), result.x() - cameraOrigin.x());
+        double angle_dist = fabs(std::min((2 * M_PI) - fabs(angle - cameraRotYaw), fabs(angle - cameraRotYaw)) / M_PI);
+        double aw = -1.0 * angleFactor * angle_dist;
+        double w = dw + aw + 1.0;
         curVisibilityValue *= w;
+
         visibilityValue += curVisibilityValue;
         node->setValue(curVisibilityValue + (1.0 * probValOffset));  // for debugging
         visibleCells.insert(resultKey);
