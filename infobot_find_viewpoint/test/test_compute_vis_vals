@@ -14,8 +14,8 @@ if __name__ == "__main__":
     # octomap_filename = "real-floor4_corridor-model.bt"
     # topomap_filename = "real-floor4_corridor-nogo-topo.yaml"
 
-    margin = 5.0
-    # margin = 2.5
+    margin = 2.0
+    # margin = 5.0
 
     mode = ComputeVisibilityValuesRequest.HEIGHT
 

@@ -15,8 +15,9 @@
   <arg name="horizontal_angle_of_view" default="1.01229097"/>
   <arg name="vertical_angle_of_view" default="0.785398163"/>
   <arg name="fov_grid_res" default="100"/>
-  <arg name="dist_factor_a" default="0.1"/>
+  <arg name="dist_factor_a" default="0.02"/>
   <arg name="dist_factor_b" default="5.0"/>
+  <arg name="ang_factor" default="1.0"/>
   <arg name="height_mean" default="1.65"/>
   <arg name="height_var" default="0.05"/>
 
@@ -52,6 +53,7 @@
     <param name="fov_grid_res" value="$(arg fov_grid_res)"/>
     <param name="dist_factor_a" value="$(arg dist_factor_a)"/>
     <param name="dist_factor_b" value="$(arg dist_factor_b)"/>
+    <param name="ang_factor" value="$(arg ang_factor)"/>
     <param name="height_mean" value="$(arg height_mean)"/>
     <param name="height_var" value="$(arg height_var)"/>
   </node>
