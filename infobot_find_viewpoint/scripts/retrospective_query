@@ -115,6 +115,7 @@ if __name__ == "__main__":
     pose_candidate_min_dist = rospy.get_param("~pose_candidate_min_dist", 0.2)  # in meters
     pose_candidate_min_ang_diff = rospy.get_param("~pose_candidate_min_ang_diff", 20 * np.pi / 180)  # in radians
     camera_topic_name = rospy.get_param("~camera_topic_name", "/prosilica_vga/image_rect_color")
+    skip_n_poses = rospy.get_param("~skip_n_poses", 1)
     visualization_on = rospy.get_param("~visualization_on", True)
 
     # Get poses.
@@ -140,13 +141,14 @@ if __name__ == "__main__":
     path_pub.publish(path)
 
     # Filter unvisited poses.
-    print "WARNING: Skipping some poses in path.poses to accelerate computation--might produce inaccurate results!"
+    if skip_n_poses > 1:
+        print "WARNING: Skipping some poses in path.poses to accelerate computation--might produce inaccurate results!"
     visited_poses = {}
     for pose in poses:
         cands = []
         j = 0
         for pose_stamped in path.poses:
-            if j % 10 == 0:
+            if j % skip_n_poses == 0:
                 dist = np.sqrt(np.power(pose_stamped.pose.position.x - pose.position.x, 2) +
                                np.power(pose_stamped.pose.position.y - pose.position.y, 2))
                 if dist < pose_candidate_min_dist:
