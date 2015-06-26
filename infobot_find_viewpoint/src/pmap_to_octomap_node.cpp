@@ -137,6 +137,8 @@ bool ProbabilityMapToOctomapNode::getProbabilityMap(const std::string &pmap_file
       pmap_filename.c_str(), pmap_frame_id.c_str());
     return false;
   }
+
+  return true;
 }
 
 bool ProbabilityMapToOctomapNode::getOctomap(const std::string &octomap_filename,
@@ -166,6 +168,8 @@ bool ProbabilityMapToOctomapNode::getOctomap(const std::string &octomap_filename
     ROS_ERROR("Received octomap's format is not binary.");
     return false;
   }
+
+  return true;
 }
 
 //----------------------------------------------------------------------
@@ -237,10 +241,12 @@ bool ProbabilityMapToOctomapNode::heightCallback(
   if (!checkRequestArgs(pmap_filename, octomap_filename, pmap_frame_id, octomap_frame_id))
     return false;
 
+  ROS_INFO("test1");
   infobot_map_msgs::ProbabilityGrid pmap;
   if (!getProbabilityMap(pmap_filename, pmap_frame_id, pmap))
     return false;
 
+  ROS_INFO("test2");
   octomap_msgs::Octomap octomap;
   if (!getOctomap(octomap_filename, octomap_frame_id, octomap))
     return false;
