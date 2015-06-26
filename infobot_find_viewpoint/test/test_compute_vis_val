@@ -10,9 +10,8 @@ if __name__ == "__main__":
     pmap_filename = "sim-simple-room1.yaml"
     octomap_filename = "sim-simple-model.bt"
     # pmap_filename = "real-floor4-CSE491.yaml"
-    # octomap_filename = "real-floor4_corridor-model.bt"
-    # pmap_filename = "real-floor4-CSE491_people.yaml"
-    # octomap_filename = "real-floor4_corridor-model.bt"
+    # octomap_filename = "real-floor4-model.bt"
+
 
     x = 0.0
     y = 0.0

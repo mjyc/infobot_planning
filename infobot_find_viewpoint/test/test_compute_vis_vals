@@ -11,8 +11,8 @@ if __name__ == "__main__":
     octomap_filename = "sim-simple-model.bt"
     topomap_filename = "sim-simple_corridor-topo.yaml"
     # pmap_filename = "real-floor4-CSE491.yaml"
-    # octomap_filename = "real-floor4_corridor-model.bt"
-    # topomap_filename = "real-floor4_corridor-nogo-topo.yaml"
+    # octomap_filename = "real-floor4-model.bt"
+    # topomap_filename = "real-floor4-nogo-topo.yaml"
 
     margin = 2.0
     # margin = 5.0
