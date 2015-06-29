@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package>
+
+  <!-- Package Info -->
+  <name>infobot_multi_map_navigation</name>
+  <version>0.0.0</version>
+  <description>
+    Link many 2D maps together through various transitions to create a larger, possibly 3D, map.
+    This package is a catkinized version of the package from the PR2 Coffee repository:
+    http://jks-ros-pkg.googlecode.com/svn/trunk/pr2_coffee/
+  </description>
+  <maintainer email="mjyc@cs.washington.edu">Michael Jae-Yoon Chung</maintainer>
+  <author>Tony Pratkanis</author>
+  <license>TODO</license>
+
+  <!-- Dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+<!--   <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>move_base_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>map_store</build_depend>
+  <build_depend>mongodb-dev</build_depend> -->
+
+  <run_depend>rospy</run_depend>
+  <!-- <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+  <run_depend>move_base_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>map_store</run_depend>
+  <run_depend>mongodb-dev</run_depend> -->
+
+</package>
