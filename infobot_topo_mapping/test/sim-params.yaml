@@ -7,5 +7,5 @@ center_cost_scaling: 10.0
 obstacle_cost_weight: 2.0
 view_cost_weight: 1.0
 center_cost_weight: 1.0
-gibbs_max_iter: 1000
-gibbs_burnin: 200
+gibbs_max_iter: 100
+gibbs_burnin: 20
