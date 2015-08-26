@@ -3,9 +3,9 @@
 ## Demo
 The demo files are dependent on `infobot_uw_world` package. However, the `infobot_uw_world` package is not listed in `package.xml` file with `run_depend` tag, because they are the optional components of this package.
 
-To run a topo-mapping demo for sim-simple env, run:
+To run a topo-mapping demo, run:
 ```
-roslaunch infobot_topo_mapping test_extract_topology_sim-simple.launch
+roslaunch infobot_topo_mapping test_extract_topology.launch
 ```
 then, from a new shell, run:
 ```

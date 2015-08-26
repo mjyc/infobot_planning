@@ -1,5 +1,5 @@
 min_obstacle_dist: 0.35  # scitos g5's circumscribed region ~= 0.736.5 (from infobot_mira/docs/MetraLabs_SCITOS-G5_B001A256.pdf)
-optimal_view_dist: 2.0
+optimal_view_dist: 0.75
 min_voronoi_dist:  0.25
 obstacle_cost_scaling: 5.0
 view_cost_scaling: 8.0
@@ -7,5 +7,5 @@ center_cost_scaling: 10.0
 obstacle_cost_weight: 2.0
 view_cost_weight: 1.0
 center_cost_weight: 1.0
-gibbs_max_iter: 100
-gibbs_burnin: 20
+gibbs_max_iter: 1000
+gibbs_burnin: 200

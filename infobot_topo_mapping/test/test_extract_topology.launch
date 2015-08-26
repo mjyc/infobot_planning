@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- NOTE: Temporarily change the door color (808080) in infobot_uw_world/maps/partial/sim-simple_corridor.pgm to black (808080) for algorithm to treat doors as walls (has an effect on thinning algorithm). -->
+
+  <arg name="input_map_name" default="real-floor4.yaml"/>
+  <arg name="output_topomap_name" default="real-floor4-topo.yaml"/>
+
+  <arg name="vis_level" default="1"/>
+
+  <rosparam param="use_sim_time">false</rosparam>
+
+  <include file="$(find infobot_topo_mapping)/launch/extract_topology.launch">
+    <arg name="vis_level" value="$(arg vis_level)"/>
+    <arg name="param_file" value="$(find infobot_topo_mapping)/test/sim-params.yaml"/>
+    <arg name="metric_map_file" value="$(find infobot_uw_world)/maps/$(arg input_map_name)"/>
+    <arg name="topo_map_file" value="$(find infobot_uw_world)/topomaps/$(arg output_topomap_name)"/>
+  </include>
+
+</launch>
