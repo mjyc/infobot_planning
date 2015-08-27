@@ -115,7 +115,7 @@ void printUsage()
 // -----------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "infobot_topo_saver");
+  ros::init(argc, argv, "infobot_topo_sever");
 
   // Parse args
   if (argc < 2)
