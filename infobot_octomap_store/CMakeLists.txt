@@ -4,10 +4,9 @@ project(infobot_octomap_store)
 find_package(catkin REQUIRED
   roscpp
   octomap_server
-  octomap
   infobot_map_msgs
 )
-
+find_package(octomap REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem)
 
 catkin_package(
