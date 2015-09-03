@@ -322,7 +322,8 @@ bool VisibilityReasonerNode::computeVisValuesSrvCb(
     double visValue = 0.0;
     octomap::KeySet visibleCells;
     if (!computeVisibilityValue(pose, horizontal_angle_of_view_, vertical_angle_of_view_, depth_max_,
-                                fov_grid_res_, dist_factor_a_, dist_factor_b_, ang_factor_, visibleCells, visValue, octree))
+                                fov_grid_res_, dist_factor_a_, dist_factor_b_, ang_factor_, visibleCells, visValue,
+                                octree))
     {
       ROS_ERROR("Failed to compute a visibility value.");
       delete octree;
