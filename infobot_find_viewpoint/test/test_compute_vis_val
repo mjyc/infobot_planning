@@ -12,7 +12,6 @@ if __name__ == "__main__":
     # pmap_filename = "real-floor4-CSE491.yaml"
     # octomap_filename = "real-floor4-model.bt"
 
-
     x = 0.0
     y = 0.0
     theta = 0.0
