@@ -1,3 +1,6 @@
+#ifndef INFOBOT_PLANNING_VISIBILITY_REASONER_UTILS_H
+#define INFOBOT_PLANNING_VISIBILITY_REASONER_UTILS_H
+
 #include <algorithm>
 #include <cmath>
 #include <string>
@@ -416,3 +419,5 @@ inline bool computeVisibilityValue(const geometry_msgs::Pose &cameraPose,
 
   return true;
 }
+
+#endif  // INFOBOT_PLANNING_VISIBILITY_REASONER_UTILS_H

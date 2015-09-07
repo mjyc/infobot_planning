@@ -1,5 +1,5 @@
-#ifndef INFOBOT_PMAP_TO_OCTOMAP_VALIDATE_FLOAT_H
-#define INFOBOT_PMAP_TO_OCTOMAP_VALIDATE_FLOAT_H
+#ifndef INFOBOT_PLANNING_FIND_VIEWPOINT_VALIDATE_FLOAT_H
+#define INFOBOT_PLANNING_FIND_VIEWPOINT_VALIDATE_FLOAT_H
 
 #include <cmath>
 #include <geometry_msgs/PointStamped.h>
@@ -54,4 +54,4 @@ inline bool validateFloats(const infobot_map_msgs::ProbabilityGrid& msg)
   return valid;
 }
 
-#endif  // INFOBOT_PMAP_TO_OCTOMAP_VALIDATE_FLOAT_H
+#endif  // INFOBOT_PLANNING_FIND_VIEWPOINT_VALIDATE_FLOAT_H
